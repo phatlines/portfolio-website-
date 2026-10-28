@@ -1,0 +1,36 @@
+# dependencies and build output
+node_modules/
+dist/
+
+# machine and tool files
+.DS_Store
+.claude/
+.impeccable/
+.env
+.env.*
+!.env.example
+
+# working files that don't ship: screenshots, explorations, licence folder
+shots/
+explore/
+mainstream-personal-use-only/
+
+# docs stay local (README.md is the only one kept)
+*.md
+!/README.md
+
+# prototype pages and the font tester (not part of the live site)
+/prototypes.html
+/cut.html
+/desk.html
+/fonts.html
+src/cut/
+src/desk/
+src/shared/
+src/fonts/Compare.tsx
+src/fonts/compare.css
+src/fonts/main.tsx
+
+# headline fonts the site doesn't use (Gebuk is the one in use)
+src/fonts/headline/*
+!src/fonts/headline/Gebuk.ttf
