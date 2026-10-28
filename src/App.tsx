@@ -34,19 +34,28 @@ export function App() {
 
   // The page takes the colour of whatever section is in the middle of the screen.
   useLayoutEffect(() => {
+    let leadIn = 0; // 0 to 1: how far the page has faded toward a data-paint-early section (see below)
     const paint = (el: HTMLElement) => {
       const bg = colour(el.dataset.paint!), ink = colour(el.dataset.ink!), duration = reduceMotion() ? 0 : motion.pageColour;
-      gsap.to(document.body, { backgroundColor: bg, color: ink, duration, ease: "power2.out", overwrite: true });
+      // While the lead-in is running, only the section it leads into may change the page colour; an older section's timed fade would fight it.
+      if (leadIn === 0 || el.dataset.paintEarly !== undefined) gsap.to(document.body, { backgroundColor: bg, color: ink, duration, ease: "power2.out", overwrite: true });
       gsap.set(document.documentElement, { "--page": bg, "--page-ink": ink }); // the bar switches at once: a blend would flash grey
     };
     const triggers = gsap.utils.toArray<HTMLElement>("[data-paint]").map((el) =>
       ScrollTrigger.create({ trigger: el, start: "top 55%", end: "bottom 45%", onEnter: () => paint(el), onEnterBack: () => paint(el) }));
-    // A section with data-paint-early turns the page its colour a little before it arrives, so the arch leading into it never floats over the wrong colour.
+    // A section with data-paint-early="start,end" fades the page into its colour by scroll position, finishing before the section's arch appears,
+    // so the arch never floats over the wrong colour however fast you scroll (a timed fade can lag behind a quick scroll).
     const paints = gsap.utils.toArray<HTMLElement>("[data-paint]");
     const early = gsap.utils.toArray<HTMLElement>("[data-paint-early]").map((el) => {
-      const before = paints[paints.indexOf(el) - 1];
-      const to = (e: HTMLElement) => gsap.to(document.body, { backgroundColor: colour(e.dataset.paint!), duration: 0.35, ease: "power2.out", overwrite: true });
-      return ScrollTrigger.create({ trigger: el, start: el.dataset.paintEarly!, onEnter: () => to(el), onLeaveBack: () => before && to(before) });
+      const before = paints[paints.indexOf(el) - 1], [start, end] = el.dataset.paintEarly!.split(",");
+      return ScrollTrigger.create({
+        trigger: el, start, end, scrub: true,
+        onUpdate: (self) => {
+          leadIn = self.progress;
+          if (leadIn > 0) gsap.killTweensOf(document.body, "backgroundColor"); // a fade started a moment ago by a fast scroll
+          document.body.style.backgroundColor = gsap.utils.interpolate(colour(before.dataset.paint!), colour(el.dataset.paint!), self.progress);
+        },
+      });
     });
     ScrollTrigger.refresh();
     return () => [...triggers, ...early].forEach((t) => t.kill());

@@ -93,7 +93,7 @@ export function Work({ onOpen, ready }: { onOpen: Open; ready: boolean }) {
         <h2 className="sr-only" id="work-h">{site.work.heading}</h2>
         {featured.map((p, k) => <Scene key={p.slug} p={p} n={k + 1} onOpen={onOpen} />)}
       </section>
-      <section className="index" aria-labelledby="index-h" data-paint="var(--black)" data-ink="var(--paper)" data-paint-early="top 125%">
+      <section className="index" aria-labelledby="index-h" data-paint="var(--black)" data-ink="var(--paper)" data-paint-early="top 170%,top 115%">
         <SectionHeading id="index-h">{site.work.restHeading}</SectionHeading>
         <ul>{rest.map((p) => <Row key={p.slug} p={p} onOpen={onOpen} onHover={onHover} />)}</ul>
         {explorations.length > 0 && <>
