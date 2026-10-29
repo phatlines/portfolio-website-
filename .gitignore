@@ -34,3 +34,8 @@ src/fonts/main.tsx
 # headline fonts the site doesn't use (Gebuk is the one in use)
 src/fonts/headline/*
 !src/fonts/headline/Gebuk.ttf
+
+# logo working files (the preview sheets and the rejected proposal); the three mark-on-*.svg sources in logo/ stay
+logo/sheet.html
+logo/sheet.png
+logo/proposal/
