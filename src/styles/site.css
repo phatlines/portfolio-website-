@@ -296,3 +296,5 @@ main { position: relative; z-index: 1; }
   .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
   .ov-story { margin-top: 4vh; }
 }
+
+.nav-logo { height: 1.55em; width: auto; margin-right: .5em; flex: none; }
