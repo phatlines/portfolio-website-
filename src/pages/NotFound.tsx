@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+import { Logo } from "../components/Logo";
 import { site } from "../content/site";
 import { films } from "../lib/projects";
 import { motion, reduceMotion } from "../lib/motion";
@@ -81,7 +82,7 @@ export function NotFound() {
       <div className="viewfinder" aria-hidden="true"><i /><i /><i /><i /></div>
 
       <header className="nf-top">
-        <a className="nav-mark" href="/">{site.name}</a>
+        <a className="nav-mark" href="/"><Logo className="nav-logo" />{site.name}</a>
         <p className="nf-slate" aria-hidden="true"><span>{copy.slate[0]}</span><span>{copy.slate[1]}</span><Timecode /></p>
       </header>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Logo } from "../components/Logo";
 import { site } from "../content/site";
 
 export function TopBar() {
@@ -12,7 +13,7 @@ export function TopBar() {
   }, []);
   return (
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
-      <a className="nav-mark" href="#top">{site.name}</a>
+      <a className="nav-mark" href="#top"><Logo className="nav-logo" />{site.name}</a>
       <nav aria-label="Main">
         <a href="#work">{site.nav.work}</a>
         <a href="#about">{site.nav.about}</a>
