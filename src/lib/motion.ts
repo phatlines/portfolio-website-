@@ -34,6 +34,14 @@ export const motion = {
   stripSpeed: 0.06, // px per ms at rest
   stripDragBoost: 4,
   // hero
+  markAt: 0.3, // opening logo: the black square appears
+  markP: 0.8, // the p builds
+  markSlash: 1.3, // the slash blinks three times
+  markOn: 0.25,
+  markOff: 0.2,
+  markSign: 2.3, // the name is written under it
+  markSignDuration: 1.7, // so the whole sequence ends at 4.0s, before the idle auto-open below
+  markShift: 0.5, // the mark glides up to make room for the name
   idleOpenMs: 4500, // a visitor who hasn't scrolled, tapped or typed gets the opening anyway
   idleOpenScroll: 1.8, // seconds the page glides through the opening on desktop
   typeSpeed: 55, // ms per letter

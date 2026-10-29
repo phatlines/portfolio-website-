@@ -24,6 +24,7 @@ export const site = {
       { label: "Mac app", query: "mac app" },
       { label: "Motion", query: "motion" },
     ],
+    signed: "phatlines portfolio", // written by hand in the opening
     send: "Find my work",
     suggest: ["spori", "invoicely", "kapture"], // shown when the bar is focused and empty: a website, a web app, a Mac app
     suggestedLabel: "Work to start with", // read out by screen readers only

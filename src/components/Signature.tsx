@@ -3,19 +3,28 @@ import { gsap } from "gsap";
 import { reduceMotion } from "../lib/motion";
 
 /**
- * The name written live in Mainstream: a pen moves left to right and the ink appears behind it,
+ * The name written live in Edinburgh: a pen moves left to right and the ink appears behind it,
  * letter by letter at an uneven, hand-like pace, with a lift between the two words.
  * (Placeholder until phatlines' real signature strokes arrive; PENDING.md.)
  */
-export function Signature({ name, label }: { name: string; label: string }) {
+type Props = {
+  name: string; label: string; className?: string;
+  center?: boolean; // centre the writing in its box (for short words)
+  width?: number; // width of the drawing box in its own units; 900 fits a name, longer text needs more
+  startAfter?: number; // seconds after mount: write on a timer instead of when scrolled into view
+  duration?: number; // squeeze or stretch the whole writing to this many seconds
+};
+
+export function Signature({ name, label, className = "", center = false, width = 900, startAfter, duration }: Props) {
   const svg = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const s = svg.current!;
     const text = s.querySelector("text")!, ink = s.querySelector<SVGRectElement>(".sig-ink")!, nib = s.querySelector<SVGCircleElement>(".sig-nib")!;
-    let tl: gsap.core.Timeline | null = null, io: IntersectionObserver | null = null, cancelled = false;
+    let tl: gsap.core.Timeline | null = null, io: IntersectionObserver | null = null, call: gsap.core.Tween | null = null, cancelled = false;
+    const t0 = performance.now();
 
-    document.fonts.load('80px "Mainstream"').then(() => {
+    document.fonts.load('80px "Edinburgh"').then(() => {
       if (cancelled) return;
       const box = text.getBBox();
       const pad = 24; // swashes reach past the glyph boxes
@@ -43,18 +52,20 @@ export function Signature({ name, label }: { name: string; label: string }) {
       });
       tl.to(nib, { opacity: 0, duration: 0.3 });
 
+      if (duration) tl.duration(duration);
+      if (startAfter !== undefined) { call = gsap.delayedCall(Math.max(0, startAfter - (performance.now() - t0) / 1000), () => tl!.play(0)); return; }
       io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { tl!.play(0); io!.disconnect(); } }, { threshold: 0.6 });
       io.observe(s);
     });
-    return () => { cancelled = true; tl?.kill(); io?.disconnect(); };
-  }, [name]);
+    return () => { cancelled = true; tl?.kill(); call?.kill(); io?.disconnect(); };
+  }, [name, startAfter, duration]);
 
   return (
-    <svg ref={svg} className="signature" viewBox="0 0 900 220" role="img" aria-label={label}>
+    <svg ref={svg} className={`signature ${className}`} viewBox={`0 0 ${width} 220`} role="img" aria-label={label}>
       <defs>
         <clipPath id="sig-clip"><rect className="sig-ink" x="0" y="0" width="0" height="220" /></clipPath>
       </defs>
-      <text x="40" y="150" clipPath="url(#sig-clip)">{name}</text>
+      <text x={center ? width / 2 : 40} y="150" textAnchor={center ? "middle" : undefined} clipPath="url(#sig-clip)">{name}</text>
       <circle className="sig-nib" r="5" cx="0" cy="0" opacity="0" />
     </svg>
   );

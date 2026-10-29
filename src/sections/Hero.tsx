@@ -8,6 +8,7 @@ import { motion, reduceMotion } from "../lib/motion";
 import { getLenis } from "../hooks/useSmoothScroll";
 import { PromptBar } from "../components/PromptBar";
 import { HeroPeek } from "../components/HeroPeek";
+import { OpeningLogo } from "../components/OpeningLogo";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -16,11 +17,13 @@ type Props = { playing: boolean; onSeen: () => void; onOpen: (slug: string) => v
 /** Phones and tall screens get a square window; wide screens a rectangle. */
 const squareShaped = () => innerWidth < 760 || innerHeight > innerWidth * 1.15;
 const FULL = "inset(0px 0px 0px 0px round 0px 0px 0px 0px)";
+/** Width of the closed window: a rectangle as wide as the bar, or a square on phones. */
+const windowWidth = () => (squareShaped() ? Math.min(innerWidth * 0.92, 360) : Math.min(760, innerWidth * 0.92));
 
 /**
  * A light headline, a prompt bar that finds the work, and real work peeking up from the bottom.
  * The opening (once per session) is driven by the visitor, not a timer: the page starts as the first project's colour with a paper window
- * holding the typed question, and the window opens to the full screen as you scroll (desktop, scrubbed both ways) or on your first swipe (touch, one go).
+ * holding the logo animation, and the window opens to the full screen as you scroll (desktop, scrubbed both ways) or on your first swipe (touch, one go).
  * Tapping, typing or waiting a few seconds opens it too. Afterwards the same colour rises over the hero so Work begins without a seam.
  */
 export function Hero({ playing, onSeen, onOpen }: Props) {
@@ -32,16 +35,19 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
     if (!playing) return;
     const el = root.current!, q = gsap.utils.selector(el), paper = q(".hero-paper");
     const nav = document.querySelector<HTMLElement>(".nav")!;
-    const later = [nav, ...q(".pb-row"), ...q(".hero-peek")];
+    const later = [nav, ...q(".pb-row"), ...q(".peek")]; // the tiles, not their row: the scroll hand-off fades the row, and two tweens on one element fight when you scroll back up
     const split = SplitText.create(q(".hero-h1")[0], { type: "words", mask: "words", wordsClass: "hw" });
 
-    // The closed window is centred on the typed line: a rectangle as wide as the bar, or a square on phones.
-    const field = q(".pb-field")[0].getBoundingClientRect(), square = squareShaped();
-    const w = square ? Math.min(innerWidth * 0.92, 360) : Math.min(760, innerWidth * 0.92);
+    // The closed window is centred in the screen: a rectangle as wide as the bar, or a square on phones.
+    const square = squareShaped(), H = el.offsetHeight;
+    const w = windowWidth();
     const h = square ? w : Math.min(innerHeight * 0.5, 340);
-    const cy = Math.min(Math.max(field.top + 24, h / 2 + 16), innerHeight - h / 2 - 16), x = (innerWidth - w) / 2; // 24px down the field is where the typed line sits
-    const from = `inset(${cy - h / 2}px ${x}px ${innerHeight - cy - h / 2}px ${x}px round 16px 16px 16px 16px)`;
+    const cy = innerHeight / 2, x = (innerWidth - w) / 2;
+    const from = `inset(${cy - h / 2}px ${x}px ${H - cy - h / 2}px ${x}px round 16px 16px 16px 16px)`;
 
+    // Set the closed state outright: a from-to inside a paused timeline renders "immediately" lazily, and on some loads that never happened.
+    gsap.set(paper, { clipPath: from });
+    gsap.set(q(".hero-grid"), { autoAlpha: 0 });
     gsap.set(split.words, { yPercent: 115 });
     gsap.set(later, { autoAlpha: 0, y: 12 });
     let closed = true, seen = false;
@@ -54,7 +60,8 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
       },
     });
     // from-to: the browser shortens equal insets, which would misalign a plain .to()
-    tl.fromTo(paper, { clipPath: from }, { clipPath: FULL, duration: 1, ease: "power3.inOut" }, 0)
+    tl.to(q(".opening-logo"), { autoAlpha: 0, scale: 0.92, duration: 0.35, ease: "power2.in" }, 0)
+      .fromTo(paper, { clipPath: from }, { clipPath: FULL, duration: 1, ease: "power3.inOut" }, 0)
       .fromTo(q(".hero-grid"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, 0.45)
       .to(split.words, { yPercent: 0, duration: 0.7, stagger: 0.07, ease: motion.easeOut }, 0.5)
       .to(later, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06, ease: motion.easeSoft }, 1);
@@ -109,14 +116,15 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
   return (
     <div ref={track} className={`hero-track${scrubbed ? " scrubbed" : ""}`}>
       <section ref={root} className={`hero${opening ? " opening" : ""}`} aria-labelledby="hero-name" data-paint="var(--paper)" data-ink="var(--black)"
-        style={{ "--rise": featured[0]?.color } as React.CSSProperties}>
+        style={{ "--rise": featured[0]?.color, "--ow": playing ? `${windowWidth()}px` : undefined } as React.CSSProperties}>
         <div className="hero-paper" aria-hidden="true" />
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-inner">
           <h1 className="hero-h1" id="hero-name">{site.hero.heading}</h1>
-          <div className="hero-stage"><PromptBar typing onOpen={onOpen} /></div>
+          <div className="hero-stage"><PromptBar typing={!opening} onOpen={onOpen} /></div>
         </div>
         <HeroPeek onOpen={onOpen} />
+        {playing && <OpeningLogo />}
         <div className="hero-cue" aria-hidden="true" />
         <div className="hero-rise" aria-hidden="true" />
       </section>
