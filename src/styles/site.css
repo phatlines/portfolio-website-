@@ -151,7 +151,7 @@ main { position: relative; z-index: 1; }
 /* ---------- Index ---------- */
 .index { position: relative; padding: 16vh var(--pad) 12vh; }
 /* An arched cap in the list's colour, so Scene 3 ends on a curve and not a flat edge. */
-.index::before { content: ""; position: absolute; left: -1px; right: -1px; top: calc(-12vh + 1px); height: 12vh; background: var(--black); border-radius: 50% 50% 0 0 / 100% 100% 0 0; pointer-events: none; }
+.index::before { content: ""; position: absolute; left: 0; right: 0; top: calc(-12vh + 1px); height: 12vh; background: var(--black); border-radius: 50% 50% 0 0 / 100% 100% 0 0; pointer-events: none; }
 .index ul { list-style: none; margin: 0; padding: 0; }
 .index-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2fr) minmax(0, 5fr); gap: 24px; align-items: baseline; padding: 18px 0; border-top: 1px solid var(--line); text-decoration: none; }
 .index li:last-child .index-row { border-bottom: 1px solid var(--line); }
@@ -298,3 +298,8 @@ main { position: relative; z-index: 1; }
 }
 
 .nav-logo { height: 1.55em; width: auto; margin-right: .5em; flex: none; }
+/* The narrowest phones (320px): a smaller mark and tighter links so the name never touches Work. */
+@media (max-width: 360px) {
+  .nav-logo { height: 1.4em; margin-right: .35em; }
+  .nav nav { gap: 10px; }
+}
