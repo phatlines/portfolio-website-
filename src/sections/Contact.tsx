@@ -2,6 +2,7 @@ import { useState } from "react";
 import { site } from "../content/site";
 import { MailIcon, XIcon, ArrowIcon } from "../components/Icons";
 import { mailto } from "../lib/mailto";
+import { startProject } from "../lib/contact";
 
 /** The last screen: one big email action that says what it does, the contact rows, and the footer. */
 export function Contact() {
@@ -15,7 +16,7 @@ export function Contact() {
     <section className="contact" id="contact" aria-labelledby="contact-h" data-paint="var(--black)" data-ink="var(--paper)">
       <h2 className="sr-only" id="contact-h">{site.contact.heading}</h2>
 
-      <a className="cta-mail" href={mailto} data-cursor="email" aria-label={`${site.contact.big}: email ${site.email}`}>
+      <a className="cta-mail" href={mailto} onClick={startProject} data-cursor="email" aria-label={`${site.contact.big}: email ${site.email}`}>
         <span className="contact-big" aria-hidden="true">
           {site.contact.big.split("").map((c, i) => <span key={i} style={{ "--i": i } as React.CSSProperties}>{c === " " ? " " : c}</span>)}
         </span>
@@ -30,7 +31,7 @@ export function Contact() {
       <ul className="links">
         <li className="link-row">
           <span className="link-label"><MailIcon /> {site.contact.emailLabel}</span>
-          <a className="link-main" href={mailto}>{site.email}</a>
+          <a className="link-main" href={mailto} onClick={startProject}>{site.email}</a>
           <button type="button" className="copy" onClick={onCopy}>{copy === "done" ? site.contact.copied : site.contact.copy}</button>
         </li>
         <li className="link-row">

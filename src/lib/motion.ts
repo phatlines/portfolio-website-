@@ -19,20 +19,6 @@ export const motion = {
   cutEase: "power4.inOut",
   cutFade: 0.3, // reduced motion: the overlay fades instead
   // 404: the zero that missed its mark
-  zeroIn: 0.9,
-  zeroDock: 0.7, // the click of hitting the mark
-  zeroDockEase: "back.out(1.7)",
-  zeroReturn: 0.8,
-  focusPull: 1.2, // the whole frame comes into focus
-  focusLoss: 0.8,
-  lensBlur: 22, // px, how far out of focus the set is
-  driftMin: 2.4,
-  driftMax: 3.6,
-  driftX: 50, // px either way
-  driftY: 36,
-  develop: 1.1, // copy develops through timecode digits
-  stripSpeed: 0.06, // px per ms at rest
-  stripDragBoost: 4,
   // hero
   markAt: 0.3, // opening logo: the black square appears
   markP: 0.8, // the p builds
@@ -42,6 +28,11 @@ export const motion = {
   markSign: 2.3, // the name is written under it
   markSignDuration: 1.7, // so the whole sequence ends at 4.0s, before the idle auto-open below
   markShift: 0.5, // the mark glides up to make room for the name
+  nfZoom: 1.12, // the 404 number starts this much bigger and settles
+  nfIn: 1.1,
+  nfDrift: 28, // px the 404 number drifts against the pointer
+  cardIn: 0.45, // the Start a project card
+  cardOut: 0.2,
   idleOpenMs: 4500, // a visitor who hasn't scrolled, tapped or typed gets the opening anyway
   idleOpenScroll: 1.8, // seconds the page glides through the opening on desktop
   typeSpeed: 55, // ms per letter

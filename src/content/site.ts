@@ -68,6 +68,7 @@ export const site = {
     copy: "Copy email",
     copied: "Copied",
     copyFailed: "Couldn't copy. The address is phatlines@proton.me",
+    card: { openApp: "Open email app", gmail: "Open in Gmail", x: "Find me on X" }, // the Start a project card
     socialLabel: "X (Twitter)",
     socialHandle: "@phatlines_",
     follow: "Follow",
@@ -80,13 +81,12 @@ export const site = {
 
   // The 404 page. Approved 2026-10-27.
   notFound: {
-    title: "Scene missing · phatlines",
-    slate: ["Reel 404", "Scene missing"],
-    lost: { heading: "This scene didn't make the cut.", line: "The zero missed its mark. Drag it back into place." },
-    found: { heading: "Found it.", line: "Now let's get you back to the work." },
+    title: "Page not found · phatlines",
+    label: "OOPS! WRONG SLASH",
+    heading: "This page doesn't exist.",
+    path: "Nothing at", // + the address they asked for
+    noPath: "There's nothing at this address.",
     home: "Back to the start",
-    open: "Open", // + the project name
-    zeroLabel: "The zero. Drag it onto its mark, or press Enter to put it back",
-    strip: "SCENE MISSING_",
   },
+
 };

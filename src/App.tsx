@@ -9,6 +9,7 @@ import { Cursor } from "./components/Cursor";
 import { Grain } from "./components/Grain";
 import { Backdrop } from "./components/Backdrop";
 import { ProjectOverlay } from "./components/ProjectOverlay";
+import { ContactCard } from "./components/ContactCard";
 import { TopBar } from "./sections/TopBar";
 import { Hero } from "./sections/Hero";
 import { Work } from "./sections/Work";
@@ -74,6 +75,7 @@ export function App() {
         <Contact />
       </main>
       {slug && <ProjectOverlay key={slug} slug={slug} onClose={close} onOpen={open} />}
+      <ContactCard />
       <Cursor />
       <Grain />
     </>

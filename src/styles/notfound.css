@@ -1,72 +1,13 @@
-/* ---------- 404: the zero that missed its mark ---------- */
-.nf-body { overflow: hidden; height: 100svh; }
-:root { --strip-run: clamp(88px, 12vh, 120px); --nf-digit: clamp(7rem, min(26vw, 34vh), 19rem); /* short laptop screens shrink it too */ }
-
-/* The set: the same film twice. Out of focus everywhere, sharp only inside the lens. */
-.set { position: fixed; inset: 0; background: var(--black); }
-.set video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.set-soft { filter: blur(var(--blur)) saturate(.6) brightness(.3); transform: scale(1.08); }
-.set-sharp { clip-path: ellipse(var(--rx, 0px) var(--ry, 0px) at var(--lx, 50%) var(--ly, 50%)); filter: brightness(.55) contrast(1.05); } /* the films include light app screens: keep them below the type */
-/* Bottom-left scrim keeps the copy readable over any frame, focused or not. */
-.set::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top right, rgb(0 0 0 / .6), transparent 55%), radial-gradient(ellipse at 50% 45%, transparent 40%, rgb(0 0 0 / .55)); }
-
-/* The lens rim: a thin glass edge where focus starts. */
-.lens-rim { position: fixed; z-index: 2; left: calc(var(--lx, -999px) - var(--rx, 0px)); top: calc(var(--ly, -999px) - var(--ry, 0px)); width: calc(var(--rx, 0px) * 2); height: calc(var(--ry, 0px) * 2); border-radius: 50%; pointer-events: none;
-  border: 1.5px solid color-mix(in srgb, var(--paper) 35%, transparent); box-shadow: inset 0 0 0 6px rgb(0 0 0 / .18), inset 0 0 40px rgb(0 0 0 / .35), 0 0 0 1px rgb(0 0 0 / .25); transition: opacity 600ms; }
-.docked .lens-rim { opacity: 0; }
-
-/* Viewfinder corners */
-.viewfinder { position: fixed; inset: clamp(12px, 2.4vw, 28px); z-index: 5; pointer-events: none; }
-.viewfinder i { position: absolute; width: 28px; height: 28px; border: 0 solid var(--paper); opacity: .8; }
-.viewfinder i:nth-child(1) { left: 0; top: 0; border-width: 2px 0 0 2px; }
-.viewfinder i:nth-child(2) { right: 0; top: 0; border-width: 2px 2px 0 0; }
-.viewfinder i:nth-child(3) { left: 0; bottom: 0; border-width: 0 0 2px 2px; }
-.viewfinder i:nth-child(4) { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
-
-.nf-top { position: fixed; z-index: 6; left: var(--pad); right: var(--pad); top: calc(var(--pad) + 4px); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-.nf-top .nav-mark:focus-visible { outline: 3px solid var(--paper); outline-offset: 4px; }
-.nf-slate { display: flex; gap: 2px; margin: 0; font-size: var(--t-meta); font-weight: 700; font-variant-numeric: tabular-nums; }
-.nf-slate > * { background: var(--black); padding: 3px 8px; }
-.nf-slate .tc { box-shadow: inset 0 -3px 0 var(--pc); }
-
-/* 4 [mark] 4 */
-.nf-stage { position: fixed; inset: 0; z-index: 3; display: grid; place-items: center; padding: 0 var(--pad); pointer-events: none; }
-.nf-code { display: flex; align-items: center; gap: .04em; font: 400 var(--nf-digit)/.8 var(--head); margin-top: -8vh; }
-.nf-code b { font-weight: 400; padding-top: .14em; }
-.nf-mark { position: relative; width: .62em; height: .78em; }
-/* Gaffer tape: where the zero should stand. */
-.nf-mark::before, .nf-mark::after { content: ""; position: absolute; left: 50%; bottom: .02em; width: .26em; height: .03em; background: var(--pc); transform: translateX(-50%) rotate(35deg); }
-.nf-mark::after { transform: translateX(-50%) rotate(-35deg); }
-
-/* The zero: a lens you can pick up. */
-.zero { position: fixed; z-index: 4; left: 0; top: 0; font: 400 var(--nf-digit)/.8 var(--head); padding-top: .14em; color: var(--paper); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; will-change: transform;
-  filter: drop-shadow(0 0 1.5px rgb(0 0 0 / .6)) drop-shadow(0 18px 40px rgb(0 0 0 / .45)); }
-.zero { outline: 2px solid transparent; outline-offset: 6px; border-radius: 50%; } /* invisible, but Windows High Contrast draws it, so the control keeps its shape */
-.zero:active { cursor: grabbing; }
-.zero:focus-visible { outline: 3px solid var(--pc); outline-offset: 8px; border-radius: 50%; }
-
-/* Words */
-.nf-copy { position: fixed; z-index: 6; left: var(--pad); bottom: calc(var(--strip-run) + var(--pad) + 8px); max-width: 30ch; }
-.nf-copy h1 { margin: 0 0 6px; font: 400 clamp(1.5rem, 2.6vw, 2.25rem)/1.05 var(--head); letter-spacing: -.01em; }
-.nf-copy p { margin: 0 0 18px; color: var(--paper-2); font-size: 1.125rem; line-height: 1.4; }
-.nf-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.nf-actions .btn-outline { color: var(--paper); background: rgb(11 11 11 / .5); }
-
-/* SCENE MISSING_ running through the gate */
-.run-strip { position: fixed; z-index: 6; left: 0; right: 0; bottom: 0; height: var(--strip-run); background: #070707; overflow: hidden; }
-.run-strip::before, .run-strip::after { content: ""; position: absolute; left: 0; right: 0; height: 12px; background: radial-gradient(ellipse 5px 4px at 50% 50%, #3a3934 92%, transparent) 0 0 / 22px 12px repeat-x; }
-.run-strip::before { top: 4px; }
-.run-strip::after { bottom: 4px; }
-.run { position: absolute; top: 18px; bottom: 18px; display: flex; align-items: center; white-space: nowrap; will-change: transform; }
-.run-piece { display: flex; align-items: flex-start; }
-.run-piece b { font: 400 clamp(2.5rem, 6vh, 4.25rem)/1 var(--head); padding: .12em .5em 0 0; }
-.run-piece small { font-size: .8125rem; font-weight: 700; color: var(--paper-2); font-variant-numeric: tabular-nums; margin-right: 1.4em; padding-top: 4px; }
-
-@media (forced-colors: active) {
-  .nf-mark::before, .nf-mark::after { forced-color-adjust: none; background: CanvasText; }
-}
-@media (max-width: 760px) {
-  .nf-slate > :nth-child(2) { display: none; }
-  .nf-code { margin-top: -22vh; }
-  .nf-copy { right: var(--pad); max-width: none; }
-}
+/* ---------- 404: a huge faded 404, a label, one line (after upclose.studio's) ---------- */
+.nf { --hl: rgb(11 11 11 / .14); position: relative; min-height: 100svh; overflow: hidden; }
+/* The number is the page: tone on tone, far bigger than the screen, so only the middle shows. */
+.nf-digits-wrap { position: fixed; inset: 0; z-index: 0; display: grid; place-items: center; overflow: hidden; pointer-events: none; }
+.nf-digits { font: 400 max(118vh, 62vw)/.8 var(--head); letter-spacing: -.02em; white-space: nowrap; padding-top: .14em; color: color-mix(in srgb, var(--black) 7%, var(--paper)); will-change: transform; }
+.nf-main { position: relative; z-index: 2; display: grid; justify-items: start; align-content: center; gap: 14px; min-height: 100svh; padding: 120px var(--pad) 96px; }
+.nf-label { display: flex; align-items: center; gap: 12px; margin: 0; font: 700 var(--t-meta)/1 var(--body); letter-spacing: .08em; }
+/* The logo's slash, as a small mark. */
+.nf-label::before { content: ""; width: 9px; height: 18px; background: var(--pc); transform: skewX(-18deg); }
+.nf-h { margin: 0; font: 400 clamp(2rem, 5.4vw, 4.25rem)/1 var(--head); letter-spacing: -.01em; text-wrap: balance; max-width: 14ch; }
+.nf-path { margin: 0 0 14px; max-width: 40ch; font-size: 1.125rem; color: rgb(11 11 11 / .72); overflow-wrap: anywhere; }
+.nf-path b { color: var(--black); font-weight: 700; }
+@media (max-width: 760px) { .nf-main { padding-top: 104px; } }

@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Logo } from "../components/Logo";
 import { site } from "../content/site";
+import { mailto } from "../lib/mailto";
+import { startProject } from "../lib/contact";
 
-export function TopBar() {
+/** The top bar. On the 404 page `home` points every link back to the home page, since its sections are not on the page. */
+export function TopBar({ home = false }: { home?: boolean }) {
+  const to = home ? "/" : "";
   // The bar gets its frosted backing once the hero has scrolled away.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -13,12 +17,12 @@ export function TopBar() {
   }, []);
   return (
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
-      <a className="nav-mark" href="#top"><Logo className="nav-logo" />{site.name}</a>
+      <a className="nav-mark" href={home ? "/" : "#top"}><Logo className="nav-logo" />{site.name}</a>
       <nav aria-label="Main">
-        <a href="#work">{site.nav.work}</a>
-        <a href="#about">{site.nav.about}</a>
-        <a className="nav-contact" href="#contact">{site.nav.contact}</a>
-        <a className="nav-cta" href={`mailto:${site.email}`} data-cursor="write">{site.nav.cta}</a>
+        <a href={`${to}#work`}>{site.nav.work}</a>
+        <a href={`${to}#about`}>{site.nav.about}</a>
+        <a className="nav-contact" href={`${to}#contact`}>{site.nav.contact}</a>
+        <a className="nav-cta" href={mailto} onClick={startProject} data-cursor="write">{site.nav.cta}</a>
       </nav>
     </header>
   );

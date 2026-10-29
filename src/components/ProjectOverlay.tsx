@@ -8,6 +8,7 @@ import { findProject, nextProject } from "../lib/projects";
 import { motion, reduceMotion } from "../lib/motion";
 import { getLenis } from "../hooks/useSmoothScroll";
 import { mailto } from "../lib/mailto";
+import { startProject } from "../lib/contact";
 import { Button } from "./Button";
 import { LoopClip } from "./LoopClip";
 
@@ -162,7 +163,7 @@ export function ProjectOverlay({ slug, onClose, onOpen }: Props) {
           <div><dt>{site.overlay.builtWith}</dt><dd>{p.stack.join(", ")}</dd></div>
         </dl>
         <div className="ov-link ov-reveal">
-          <Button variant="ink" href={mailto} data-cursor="write">{site.nav.cta}</Button>
+          <Button variant="ink" href={mailto} onClick={startProject} data-cursor="write">{site.nav.cta}</Button>
           {p.liveUrl
             ? <Button variant="outline" href={p.liveUrl} target="_blank" rel="noreferrer">{site.overlay.live}</Button>
             : p.linkSoon ? <span className="ov-nolink">{site.overlay.noLink}</span> : null}

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { projects } from "../src/content/projects";
-import { visibleProjects, films } from "../src/lib/projects";
+import { visibleProjects } from "../src/lib/projects";
 import type { Project } from "../src/content/types";
 import { site } from "../src/content/site";
 
