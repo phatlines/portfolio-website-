@@ -45,6 +45,7 @@ export const projects: Project[] = [
     linkSoon: true,
     color: "#ece7dc",
     ink: "#121110",
+    folder: { color: "#2b2a28", ink: "#f3efe6" },
     media: { kind: "video", src: "/media/ayomide-hd.mp4", poster: "/media/ayomide.jpg", alt: "Ayomide Adeji's portfolio in dark mode (silent loop)" },
   },
   {
@@ -69,6 +70,7 @@ export const projects: Project[] = [
     liveUrl: "https://theafricanskincode.netlify.app",
     color: "#b05a22", // the site's own button brown
     ink: "#fffdf8",
+    folder: { color: "#6b3a22", ink: "#fffdf8" },
     media: { kind: "image", src: "/media/african-skin-code-tall.jpg", poster: "/media/african-skin-code.jpg", alt: "The African Skin Code website scrolling from the headline through the story and why the guide works differently" },
   },
   {

@@ -80,7 +80,7 @@ main { position: relative; z-index: 1; }
 .hero-stage { margin-inline: calc(50% - 50vw); padding: clamp(18px, 3vh, 30px) var(--pad); border-block: 1px solid var(--hl); background: rgb(11 11 11 / .025); transition: background 500ms, border-color 500ms; }
 .hero.opening .hero-stage { background: transparent; border-color: transparent; }
 
-.pb { position: relative; width: min(760px, 100%); margin: 0 auto; padding: 16px 16px 14px; text-align: left; background: #fffdf8; border: 1px solid var(--hl); border-radius: 20px; box-shadow: 0 26px 50px -32px rgb(11 11 11 / .4); transition: border-color 200ms, background 500ms, box-shadow 500ms; }
+.pb { position: relative; width: min(760px, 100%); margin: 0 auto; padding: 16px 16px 14px; text-align: left; background: var(--card); border: 1px solid var(--hl); border-radius: 20px; box-shadow: var(--shadow-s); transition: border-color 200ms, background 500ms, box-shadow 500ms; }
 .hero.opening .pb { background: transparent; border-color: transparent; box-shadow: none; } /* the logo plays in the window; the card and its typing appear once it opens */
 .hero.opening .pb-typed { visibility: hidden; }
 .pb:focus-within { border-color: color-mix(in srgb, var(--pc) 75%, transparent); }
@@ -106,25 +106,37 @@ main { position: relative; z-index: 1; }
 
 /* Matches drop under the bar. On phones they sit in the flow instead, so the keyboard never covers them. */
 .pb-results { position: absolute; left: 0; right: 0; top: calc(100% + 10px); z-index: 4; }
-.pb-results ul { margin: 0; padding: 0; list-style: none; overflow: hidden; border: 1px solid var(--hl); border-radius: 14px; background: #fffdf8; box-shadow: 0 24px 44px -26px rgb(11 11 11 / .45); }
+.pb-results ul { margin: 0; padding: 0; list-style: none; overflow: hidden; border: 1px solid var(--hl); border-radius: 14px; background: var(--card); box-shadow: var(--shadow-s); }
 .pb-results li + li { border-top: 1px solid var(--hl); }
 .pb-results a { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; text-decoration: none; transition: background 200ms; }
 .pb-results a b { font: 400 1.5rem/1 var(--head); padding-top: .12em; }
 .pb-results a span { margin-left: auto; color: rgb(11 11 11 / .66); font-size: var(--t-meta); font-weight: 600; }
 .pb-results a svg { font-size: 1.125rem; }
 .pb-results a:hover, .pb-results a:focus-visible { background: rgb(11 11 11 / .06); }
-.pb-none { margin: 0; padding: 14px 16px; border: 1px solid var(--hl); border-radius: 14px; background: #fffdf8; color: rgb(11 11 11 / .7); font-size: 1rem; }
+.pb-none { margin: 0; padding: 14px 16px; border: 1px solid var(--hl); border-radius: 14px; background: var(--card); color: rgb(11 11 11 / .7); font-size: 1rem; }
 /* Scroll cue while the window is closed: a line that grows and shrinks. Drawn in CSS, no words. */
 .hero-cue { position: absolute; z-index: 6; left: 50%; bottom: 20px; width: 2px; height: 44px; margin-left: -1px; background: var(--black); transform-origin: top; opacity: 0; pointer-events: none; transition: opacity 300ms; animation: cue 1.6s ease-in-out infinite; }
 .hero.opening .hero-cue { opacity: .75; }
 @keyframes cue { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
 /* Real work peeking up from the bottom edge: rectangles on wide screens, squares on phones. */
 .hero-peek { position: absolute; z-index: 1; left: 0; right: 0; bottom: -36px; display: flex; justify-content: center; gap: clamp(10px, 1.6vw, 20px); margin: 0; padding: 0 var(--pad); list-style: none; }
-.peek { position: relative; display: block; width: clamp(150px, 17vw, 250px); aspect-ratio: 3 / 2; overflow: hidden; border-radius: 14px; border: 1px solid var(--hl); background: #fffdf8; box-shadow: 0 24px 40px -28px rgb(11 11 11 / .45); transition: transform 500ms var(--ease-out); }
-.peek img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 700ms var(--ease-out); }
-.peek span { position: absolute; left: 8px; top: 8px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 2px 8px; border-radius: 6px; background: #fffdf8; color: var(--black); font: 600 var(--t-meta)/1.5 var(--body); }
-.peek:hover { transform: translateY(-10px); }
-.peek:hover img { transform: scale(1.05); }
+.peek { position: relative; display: block; width: clamp(150px, 17vw, 250px); aspect-ratio: 3 / 2; perspective: 900px; color: var(--fi); transition: transform 500ms var(--ease-out); }
+/* The folder: a darker back with a tab, a paper sheet, the project's poster, and a glass front that swings open from its left edge. */
+.pk-back { position: absolute; inset: 0; border-radius: 14px; background: color-mix(in srgb, var(--fc) 78%, black); box-shadow: var(--shadow-s); }
+.pk-back::before { content: ""; position: absolute; left: 0; top: -9%; width: 38%; height: 14%; border-radius: 10px 10px 0 0; background: inherit; }
+.pk-sheet, .pk-card { position: absolute; transition: transform 600ms var(--ease-out); }
+.pk-sheet { left: 6%; right: 6%; top: 6%; bottom: 4%; border-radius: 8px; background: var(--card); }
+.pk-card { left: 8%; top: 12%; width: 80%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: top; border-radius: 6px; box-shadow: 0 8px 16px -8px rgb(11 11 11 / .5); }
+.pk-front { position: absolute; inset: 14% 0 0; display: block; padding: 10px 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-radius: 14px; transform-origin: left center; border: 1px solid rgb(255 255 255 / .35); background: linear-gradient(160deg, color-mix(in srgb, var(--fc) 58%, transparent), color-mix(in srgb, var(--fc) 86%, transparent)); -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); box-shadow: inset 1px 1px 0 rgb(255 255 255 / .45); font: 600 var(--t-meta)/1.3 var(--body); transition: transform 600ms var(--ease-out); }
+.peek.open .pk-front, .peek:focus-visible .pk-front { transform: rotateY(-34deg); }
+.peek.open .pk-sheet, .peek:focus-visible .pk-sheet { transform: translateY(-12%); }
+.peek.open .pk-card, .peek:focus-visible .pk-card { transform: translate(6%, -112%) rotate(5deg) scale(1.08); }
+@media (hover: hover) {
+  .peek:hover { transform: translateY(-10px); }
+  .peek:hover .pk-front { transform: rotateY(-34deg); }
+  .peek:hover .pk-sheet { transform: translateY(-12%); }
+  .peek:hover .pk-card { transform: translate(6%, -112%) rotate(5deg) scale(1.08); }
+}
 .peek:active { transform: translateY(-4px) scale(.98); }
 .peek:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
 /* The first project's colour rises over the hero as an arch that flattens as it covers the screen, so Work begins without a seam. */
@@ -143,7 +155,7 @@ main { position: relative; z-index: 1; }
 .scene-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; margin: 0; font-weight: 700; font-size: 1rem; }
 .scene-name { grid-column: 1 / -1; margin: 0; font-size: clamp(2.75rem, 250vw / var(--len, 1), var(--t-scene)); /* --len: long names shrink, short ones keep the full size */ line-height: .95; position: relative; z-index: 2; pointer-events: none; }
 .scene-name .ch-mask { padding: .14em .06em .06em; margin: -.14em -.06em -.06em; }
-.scene-media { grid-column: 3 / 11; margin-top: 24px; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; display: block; border: 1px solid transparent; box-shadow: 0 40px 90px -40px rgb(0 0 0 / .55); will-change: transform; } /* border: keeps its shape in Windows High Contrast */
+.scene-media { grid-column: 3 / 11; margin-top: 24px; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; display: block; border: 1px solid transparent; box-shadow: var(--shadow-l); will-change: transform; } /* border: keeps its shape in Windows High Contrast */
 .scene-line { grid-column: 3 / 9; margin: 20px 0 0; font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.3; font-weight: 500; max-width: 52ch; }
 
 /* ---------- Section headings ---------- */
@@ -323,7 +335,7 @@ main { position: relative; z-index: 1; }
 /* ---------- Start a project card ---------- */
 .card-open { overflow: hidden; }
 .cc { --hl: rgb(11 11 11 / .14); --oi: var(--black); --oc: var(--paper); /* the solid button: paper text on black */ position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 16px; background: rgb(11 11 11 / .55); }
-.cc-card { position: relative; width: min(520px, 100%); max-height: 100%; overflow-y: auto; padding: clamp(24px, 4vw, 36px); background: #fffdf8; color: var(--black); border: 1px solid var(--hl); border-radius: 20px; box-shadow: 0 40px 80px -40px rgb(11 11 11 / .6); }
+.cc-card { position: relative; width: min(520px, 100%); max-height: 100%; overflow-y: auto; padding: clamp(24px, 4vw, 36px); background: var(--card); color: var(--black); border: 1px solid var(--hl); border-radius: 20px; box-shadow: var(--shadow-l); }
 .cc-card h2 { margin: 0 0 6px; padding-right: 88px; font: 400 clamp(1.75rem, 5vw, 2.5rem)/1 var(--head); letter-spacing: -.01em; padding-top: .1em; }
 .cc-line { margin: 0 0 18px; color: rgb(11 11 11 / .7); font-size: 1.0625rem; line-height: 1.4; }
 .cc-email { margin: 0 0 18px; font: 700 clamp(1.1875rem, 4.6vw, 1.625rem)/1.2 var(--body); overflow-wrap: anywhere; }

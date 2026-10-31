@@ -26,5 +26,6 @@ export type Project = {
   linkSoon?: boolean; // no live link yet, but one is coming: shows "Live link coming soon"
   color: string; // the page turns this colour while the project is on screen
   ink: string; // text colour on `color`
+  folder?: { color: string; ink: string }; // the hero folder, when `color` would vanish on the page or sit too close to a neighbour
   media: Media;
 };

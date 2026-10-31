@@ -4,6 +4,9 @@
 @font-face { font-family: "Gloock"; src: url(/fonts/gloock.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 
 :root {
+  --card: #fffdf8; /* card and tile surfaces */
+  --shadow-s: 0 24px 44px -28px rgb(11 11 11 / .45); /* tiles, prompt bar, results */
+  --shadow-l: 0 40px 80px -40px rgb(11 11 11 / .6); /* scene media, contact card */
   --body: "Hanken Grotesk", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   --pad: clamp(16px, 3.2vw, 48px);
   --ease-out: cubic-bezier(.22, 1, .36, 1);
