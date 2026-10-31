@@ -35,7 +35,7 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
     if (!playing) return;
     const el = root.current!, q = gsap.utils.selector(el), paper = q(".hero-paper");
     const nav = document.querySelector<HTMLElement>(".nav")!;
-    const later = [nav, ...q(".pb-row"), ...q(".peek")]; // the tiles, not their row: the scroll hand-off fades the row, and two tweens on one element fight when you scroll back up
+    const later = [nav, ...q(".pb-row"), ...q(".peek-label"), ...q(".peek")]; // the tiles, not their row: the scroll hand-off fades the row, and two tweens on one element fight when you scroll back up
     const split = SplitText.create(q(".hero-h1")[0], { type: "words", mask: "words", wordsClass: "hw" });
 
     // The closed window is centred in the screen: a rectangle as wide as the bar, or a square on phones.

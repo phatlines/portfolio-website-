@@ -28,6 +28,7 @@ export const site = {
     send: "Find my work",
     suggest: ["spori", "invoicely", "kapture"], // shown when the bar is focused and empty: a website, a web app, a Mac app
     suggestedLabel: "Work to start with", // read out by screen readers only
+    peekTitle: "Three files from the desk", // the line above the folders
     peekLabel: "Featured work", // read out by screen readers only
     open: "Open", // + the project name, read out by screen readers only
     resultsLabel: "Matching projects",

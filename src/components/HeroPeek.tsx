@@ -6,7 +6,9 @@ import { featured } from "../lib/projects";
 export function HeroPeek({ onOpen }: { onOpen: (slug: string) => void }) {
   const [armed, setArmed] = useState<string | null>(null);
   return (
-    <ul className="hero-peek" aria-label={site.hero.peekLabel} onMouseLeave={() => setArmed(null)}>
+    <div className="hero-peek">
+      <p className="peek-label">{site.hero.peekTitle}</p>
+      <ul className="peek-row" aria-label={site.hero.peekLabel} onMouseLeave={() => setArmed(null)}>
       {featured.slice(0, 3).map((p) => {
         const f = p.folder ?? { color: p.color, ink: p.ink };
         return (
@@ -31,6 +33,7 @@ export function HeroPeek({ onOpen }: { onOpen: (slug: string) => void }) {
           </li>
         );
       })}
-    </ul>
+      </ul>
+    </div>
   );
 }
