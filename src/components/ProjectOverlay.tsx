@@ -154,7 +154,11 @@ export function ProjectOverlay({ slug, onClose, onOpen }: Props) {
             {p.name.split(" ").map((w, k) => <span key={k}>{k > 0 && " "}<span className="word" aria-hidden="true">{w.split("").map((c, j) => <span className="ch" key={j}>{c}</span>)}</span></span>)}
           </h2>
         </header>
-        <div className="ov-media ov-reveal"><LoopClip media={p.media} /></div>
+        <div className="ov-imac">
+          <div className="ov-media ov-reveal"><LoopClip media={p.media} /></div>
+          <i className="imac-chin ov-reveal" aria-hidden="true" />
+          <i className="imac-stand ov-reveal" aria-hidden="true" />
+        </div>
         <div className="ov-story">
           {p.story.map((s, i) => <p key={i}>{s}</p>)}
         </div>

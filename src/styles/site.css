@@ -260,7 +260,13 @@ main { position: relative; z-index: 1; }
 .ov-name { margin: 2vh 0 4vh; font-size: clamp(2.75rem, 190vw / var(--len, 1), clamp(4rem, 16vw, 16rem)); line-height: 1; overflow: hidden; padding-top: .12em; }
 .ov-name .ch { display: inline-block; }
 .scene-name .word, .ov-name .word { display: inline-block; white-space: nowrap; } /* wrap between words, never inside one */
-.ov-media { grid-column: 1 / 9; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: rgb(0 0 0 / .2); }
+/* Every project is shown on an iMac drawn in code: a black bezel round the screen, a silver chin, a neck and a foot. The match cut still moves .ov-media, the screen. */
+.ov-imac { --bz: clamp(6px, .9vw, 12px); --bezel: #0c0c0d; --alu: #d8d8da; --alu-shade: #b9b9bd; grid-column: 1 / 9; grid-row: span 3; align-self: start; display: flex; flex-direction: column; align-items: center; padding: var(--bz) var(--bz) 0; }
+.ov-media { width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: rgb(0 0 0 / .2); box-shadow: 0 0 0 var(--bz) var(--bezel); }
+.imac-chin { display: block; width: calc(100% + var(--bz) * 2); height: clamp(28px, 5vw, 64px); margin: calc(var(--bz) - 1px) calc(var(--bz) * -1) 0; border-radius: 0 0 14px 14px; background: var(--alu); box-shadow: inset 0 1px 0 rgb(255 255 255 / .55); }
+.imac-stand { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.imac-stand::before { content: ""; width: 15%; height: clamp(36px, 6.4vw, 88px); background: linear-gradient(90deg, var(--alu-shade), var(--alu) 30%, var(--alu) 70%, var(--alu-shade)); clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%); }
+.imac-stand::after { content: ""; width: 30%; height: clamp(8px, 1.1vw, 14px); border-radius: 999px 999px 8px 8px; background: var(--alu-shade); box-shadow: var(--shadow-s); }
 .ov-story { grid-column: 9 / -1; }
 .ov-story p { margin: 0 0 1em; font-size: 1.125rem; line-height: 1.55; }
 .ov-facts { grid-column: 9 / -1; margin: 2vh 0 0; display: grid; gap: 14px; }
@@ -305,7 +311,8 @@ main { position: relative; z-index: 1; }
   .preview { display: none; }
   .offer { grid-template-columns: 1fr; gap: 16px; }
   .about { grid-template-columns: 1fr; }
-  .ov-media, .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
+  .ov-imac { grid-row: auto; }
+  .ov-imac, .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
   .ov-story { margin-top: 4vh; }
 }
 @media (min-width: 761px) and (max-width: 1100px) {
@@ -313,7 +320,7 @@ main { position: relative; z-index: 1; }
   .index-row b { grid-row: span 2; }
   .offer { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .offer h3 { grid-column: 1 / -1; }
-  .ov-media { grid-column: 1 / -1; }
+  .ov-imac { grid-column: 1 / -1; grid-row: auto; }
   .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
   .ov-story { margin-top: 4vh; }
 }
