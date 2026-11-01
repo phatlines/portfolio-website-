@@ -31,6 +31,7 @@ export function Make({ onOpen }: { onOpen: (slug: string) => void }) {
       gsap.set(q(".do-reel, .do-tabs, .do-cta"), { autoAlpha: 0 });
       gsap.set(splits.map((s) => s.chars), { yPercent: 115 });
       gsap.set(clips, { clipPath: "inset(100% 0% 0% 0%)" });
+      clips.forEach((c) => { (c as HTMLElement).tabIndex = -1; });
 
       // Arrival: as the section slides up over the leaving hero, the reel fades in and the first job writes itself on.
       const intro = gsap.timeline({ defaults: { ease: "none" } });
@@ -43,7 +44,7 @@ export function Make({ onOpen }: { onOpen: (slug: string) => void }) {
         if (i === now) return;
         now = i;
         tabs.forEach((t, k) => { t.classList.toggle("on", k === i); t.setAttribute("aria-current", k === i ? "true" : "false"); });
-        clips.forEach((c, k) => c.classList.toggle("on", k === i));
+        clips.forEach((c, k) => { c.classList.toggle("on", k === i); c.tabIndex = k === i ? 0 : -1; }); // keyboard focus only reaches the clip on screen
       };
       const arrive = ScrollTrigger.create({ animation: intro, trigger: root.current, start: "top 92%", end: "top top", scrub: true, invalidateOnRefresh: true,
         onUpdate: (self) => { if (self.progress < 1) mark(self.progress > 0.55 ? 0 : -1); } });

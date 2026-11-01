@@ -50,7 +50,7 @@ export const projects: Project[] = [
   },
   {
     slug: "african-skin-code",
-    name: "The African Skin Code",
+    name: "A.S.C",
     type: "Website",
     year: 2026, // TODO: confirm the year
     role: "Design + build", // TODO: confirm the role
@@ -75,7 +75,7 @@ export const projects: Project[] = [
   },
   {
     slug: "invoicely",
-    name: "invoicely",
+    name: "Invoicely",
     type: "Web app",
     year: 2026,
     role: "Design + build",
