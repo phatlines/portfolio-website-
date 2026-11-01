@@ -32,7 +32,7 @@ p { text-wrap: pretty; }
 .backdrop { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
 main { position: relative; z-index: 1; }
 .overlay-open .backdrop { visibility: hidden; }
-.hero-h1, .scene-name, .index-row b, .contact-big, .nav-mark, .section-h, .offer h3, .ov-name, .ov-next b, .link-main, .cta-cue-text b {
+.hero-h1, .wk-name, .wk-n, .contact-big, .nav-mark, .section-h, .ov-name, .ov-next b, .link-main, .cta-cue-text b {
   font-family: var(--head); font-weight: 400; font-synthesis: none; letter-spacing: -.01em;
 }
 
@@ -46,6 +46,8 @@ main { position: relative; z-index: 1; }
 .btn-ink { background: var(--oi); color: var(--oc); }
 .btn-ink:focus-visible { outline-color: var(--oi); }
 
+.opening-rain { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; pointer-events: none; }
+
 /* ---------- Top bar ---------- */
 .nav { position: fixed; inset: 0 0 auto; z-index: 60; display: flex; justify-content: space-between; align-items: center; padding: 16px var(--pad); color: var(--page-ink); transition: color 300ms; }
 .overlay-open .nav { visibility: hidden; }
@@ -58,12 +60,25 @@ main { position: relative; z-index: 1; }
 .nav-contact { display: none !important; } /* desktop has the pill; phones swap it for this link */
 .nav nav { display: flex; gap: clamp(16px, 2.4vw, 32px); align-items: center; font-size: 1rem; font-weight: 600; }
 .nav nav a { text-decoration: none; }
-.nav nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.nav-cta { padding: 12px 18px; border: 1.5px solid currentColor; border-radius: 999px; white-space: nowrap; }
+.roll { position: relative; display: inline-block; overflow: hidden; line-height: 1.35; }
+.roll > span { display: block; transition: transform 480ms var(--ease-out); }
+.roll > span + span { position: absolute; inset: 0; transform: translateY(105%); }
+.nav nav a:not(.nav-cta) { position: relative; }
+.nav nav a:not(.nav-cta)::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 8px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 480ms var(--ease-out); }
+.nav nav a:not(.nav-cta):hover::after, .nav nav a[aria-current="true"]::after { transform: scaleX(1); transform-origin: left; }
+.nav nav a:hover .roll > span { transform: translateY(-105%); }
+.nav nav a:hover .roll > span + span { transform: translateY(0); }
+.nav nav a[aria-current="true"]::after { transform: scaleX(.28); }
+.nav nav a[aria-current="true"]:hover::after { transform: scaleX(1); }
+.nav-cta { position: relative; isolation: isolate; overflow: hidden; padding: 12px 18px; border: 1.5px solid currentColor; border-radius: 999px; white-space: nowrap; transition: color 400ms var(--ease-out); }
+.nav-cta::before { content: ""; position: absolute; inset: -1px; z-index: -1; background: var(--page-ink); transform: translateY(101%); transition: transform 480ms var(--ease-out); }
+.nav-cta:hover { color: var(--page); border-color: var(--page-ink); }
+.nav-cta:hover::before { transform: translateY(0); }
+.nav-cta:active { transform: scale(.97); }
 .nav-cta:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
 
 /* ---------- Hero: what are you building today? (light, so it feels open on a phone) ---------- */
-.hero { --hl: rgb(11 11 11 / .14); position: relative; min-height: 100svh; display: grid; place-items: center; padding: 96px var(--pad) 190px; overflow: hidden; isolation: isolate; color: var(--black); }
+.hero { --hl: rgb(11 11 11 / .14); position: relative; min-height: 100svh; display: grid; place-items: center; padding: 96px var(--pad); overflow: hidden; isolation: isolate; color: var(--black); }
 /* First visit on desktop: the page keeps one extra screen of scroll, and the hero stays put while the window opens. */
 .hero-track.scrubbed { height: 200svh; }
 .hero-track.scrubbed .hero { position: sticky; top: 0; height: 100svh; min-height: 0; }
@@ -72,13 +87,19 @@ main { position: relative; z-index: 1; }
 .hero-paper { display: none; position: absolute; inset: 0; z-index: -1; background: var(--paper); }
 .hero.opening .hero-paper { display: block; }
 /* Two hairlines frame the content column, like the cell around a prompt box. */
-.hero-grid { position: absolute; inset-block: 0; left: 50%; width: min(856px, calc(100% - var(--pad) * 2)); transform: translateX(-50%); border-inline: 1px solid var(--hl); pointer-events: none; z-index: -1; }
+/* The column lines: now they belong to the search band and run only a short way above and below it. */
+.hero-grid { position: absolute; inset-block: -12vh; left: 0; right: 0; margin-inline: auto; width: min(856px, calc(100% - var(--pad) * 2)); border-inline: 1px solid var(--hl); pointer-events: none; z-index: -1; }
 .hero-inner { position: relative; z-index: 2; width: min(856px, 100%); display: grid; gap: clamp(24px, 4.4vh, 44px); text-align: center; }
 .hero-h1 { margin: 0; font-size: clamp(2rem, 5vw, 4.25rem); line-height: 1; text-wrap: balance; padding: 0 clamp(8px, 3vw, 32px); }
 .hw-mask { padding: .16em .06em .1em; margin: -.16em -.06em -.1em; }
 /* The band the bar sits in runs edge to edge; its top and bottom hairlines cross the column lines. */
-.hero-stage { margin-inline: calc(50% - 50vw); padding: clamp(18px, 3vh, 30px) var(--pad); border-block: 1px solid var(--hl); background: rgb(11 11 11 / .025); transition: background 500ms, border-color 500ms; }
-.hero.opening .hero-stage { background: transparent; border-color: transparent; }
+/* The band round the bar: its hairlines overshoot the column lines by a little (two pads each side) instead of crossing the whole screen. */
+.hero-stage { position: relative; margin-inline: calc(var(--pad) * -2); padding: clamp(18px, 3vh, 30px) var(--pad); background: rgb(11 11 11 / .025); transition: background 500ms; }
+.hero-stage::before, .hero-stage::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: var(--hl); transform: scaleX(var(--ln, 1)); transition: opacity 500ms; }
+.hero-stage::before { top: 0; }
+.hero-stage::after { bottom: 0; }
+.hero.opening .hero-stage { background: transparent; }
+.hero.opening .hero-stage::before, .hero.opening .hero-stage::after { opacity: 0; }
 
 .pb { position: relative; width: min(760px, 100%); margin: 0 auto; padding: 16px 16px 14px; text-align: left; background: var(--card); border: 1px solid var(--hl); border-radius: 20px; box-shadow: var(--shadow-s); transition: border-color 200ms, background 500ms, box-shadow 500ms; }
 .hero.opening .pb { background: transparent; border-color: transparent; box-shadow: none; } /* the logo plays in the window; the card and its typing appear once it opens */
@@ -118,84 +139,90 @@ main { position: relative; z-index: 1; }
 .hero-cue { position: absolute; z-index: 6; left: 50%; bottom: 20px; width: 2px; height: 44px; margin-left: -1px; background: var(--black); transform-origin: top; opacity: 0; pointer-events: none; transition: opacity 300ms; animation: cue 1.6s ease-in-out infinite; }
 .hero.opening .hero-cue { opacity: .75; }
 @keyframes cue { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
-/* Real work peeking up from the bottom edge: rectangles on wide screens, squares on phones. */
-.hero-peek { position: absolute; z-index: 1; left: 0; right: 0; bottom: -36px; display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 0 var(--pad); }
-.peek-row { display: flex; justify-content: center; gap: clamp(10px, 1.6vw, 20px); margin: 0; padding: 0; list-style: none; }
-.peek-label { display: flex; align-items: center; gap: 10px; margin: 0; font: 400 clamp(1.125rem, 1.8vw, 1.5rem)/1 var(--head); }
-.peek-label::before { content: ""; width: 8px; height: 18px; background: var(--pc); transform: skewX(-18deg); } /* the logo's slash */
-.peek { position: relative; display: block; width: clamp(150px, 17vw, 250px); aspect-ratio: 3 / 2; perspective: 900px; color: var(--fi); transition: transform 500ms var(--ease-out); }
-/* The folder: a darker back with a tab, a paper sheet, the project's poster, and a glass front that swings open from its left edge. */
-.pk-back { position: absolute; inset: 0; border-radius: 14px; background: color-mix(in srgb, var(--fc) 78%, black); box-shadow: var(--shadow-s); }
-.pk-back::before { content: ""; position: absolute; left: 0; top: -9%; width: 38%; height: 14%; border-radius: 10px 10px 0 0; background: inherit; }
-.pk-sheet, .pk-card { position: absolute; transition: transform 600ms var(--ease-out); }
-.pk-sheet { left: 6%; right: 6%; top: 6%; bottom: 4%; border-radius: 8px; background: var(--card); }
-.pk-card { left: 8%; top: 12%; width: 80%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: top; border-radius: 6px; box-shadow: 0 8px 16px -8px rgb(11 11 11 / .5); }
-.pk-front { position: absolute; inset: 14% 0 0; display: block; padding: 10px 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-radius: 14px; transform-origin: left center; border: 1px solid rgb(255 255 255 / .35); background: linear-gradient(160deg, color-mix(in srgb, var(--fc) 58%, transparent), color-mix(in srgb, var(--fc) 86%, transparent)); -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); box-shadow: inset 1px 1px 0 rgb(255 255 255 / .45); font: 600 var(--t-meta)/1.3 var(--body); transition: transform 600ms var(--ease-out); }
-.peek.open .pk-front, .peek:focus-visible .pk-front { transform: rotateY(-34deg); }
-.peek.open .pk-sheet, .peek:focus-visible .pk-sheet { transform: translateY(-12%); }
-.peek.open .pk-card, .peek:focus-visible .pk-card { transform: translate(6%, -112%) rotate(5deg) scale(1.08); }
-@media (hover: hover) {
-  .peek:hover { transform: translateY(-10px); }
-  .peek:hover .pk-front { transform: rotateY(-34deg); }
-  .peek:hover .pk-sheet { transform: translateY(-12%); }
-  .peek:hover .pk-card { transform: translate(6%, -112%) rotate(5deg) scale(1.08); }
-}
-.peek:active { transform: translateY(-4px) scale(.98); }
-.peek:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
 /* The first project's colour rises over the hero as an arch that flattens as it covers the screen, so Work begins without a seam. */
-.hero-rise { position: absolute; inset: 0; z-index: 5; background: var(--rise); clip-path: ellipse(75% 0% at 50% 100%); pointer-events: none; }
 
 /* ---------- Clips ---------- */
 .clip { display: block; width: 100%; height: 100%; object-fit: cover; }
 .clip-tall { background-size: 100% auto; background-position: 50% 0; animation: site-tour 16s ease-in-out infinite alternate; }
 @keyframes site-tour { to { background-position: 50% 100%; } }
 
-/* ---------- Scenes ---------- */
-.scene { position: relative; color: var(--si); background: var(--sc); border-radius: 50% 50% 0 0 / var(--arc, 0px) var(--arc, 0px) 0 0; min-height: 125svh; padding: 14vh var(--pad) 10vh; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-content: center; row-gap: 24px; }
-/* The last scene leaves room under its text for the arched cap of the list that follows. */
-.work .scene:last-of-type { padding-bottom: calc(10vh + 14vh); }
-.scene-dim { position: absolute; inset: 0; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; z-index: 3; }
-.scene-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; margin: 0; font-weight: 700; font-size: 1rem; }
-.scene-name { grid-column: 1 / -1; margin: 0; font-size: clamp(2.75rem, 250vw / var(--len, 1), var(--t-scene)); /* --len: long names shrink, short ones keep the full size */ line-height: .95; position: relative; z-index: 2; pointer-events: none; }
-.scene-name .ch-mask { padding: .14em .06em .06em; margin: -.14em -.06em -.06em; }
-.scene-media { grid-column: 3 / 11; margin-top: 24px; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; display: block; border: 1px solid transparent; box-shadow: var(--shadow-l); will-change: transform; } /* border: keeps its shape in Windows High Contrast */
-.scene-line { grid-column: 3 / 9; margin: 20px 0 0; font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.3; font-weight: 500; max-width: 52ch; }
 
 /* ---------- Section headings ---------- */
 .section-h { margin: 0 0 5vh; font-size: var(--t-section); line-height: .95; }
 
-/* ---------- Index ---------- */
-.index { position: relative; padding: 16vh var(--pad) 12vh; }
-/* An arched cap in the list's colour, so Scene 3 ends on a curve and not a flat edge. */
-.index::before { content: ""; position: absolute; left: 0; right: 0; top: calc(-12vh + 1px); height: 12vh; background: var(--black); border-radius: 50% 50% 0 0 / 100% 100% 0 0; pointer-events: none; }
-.index ul { list-style: none; margin: 0; padding: 0; }
-.index-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2fr) minmax(0, 5fr); gap: 24px; align-items: baseline; padding: 18px 0; border-top: 1px solid var(--line); text-decoration: none; }
-.index li:last-child .index-row { border-bottom: 1px solid var(--line); }
-.index-row b { font-size: clamp(2.25rem, 6vw, 5.5rem); line-height: 1; padding-top: .08em; transition: transform 400ms var(--ease-out), color 200ms; }
-.index-row:hover b { color: var(--pc); transform: translateX(24px); }
-.index-type { font-weight: 700; font-size: 1rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
-.tag { font-style: normal; font-weight: 700; font-size: var(--t-meta); padding: 3px 10px; border: 1px solid currentColor; border-radius: 999px; white-space: nowrap; }
-.index-line { color: var(--paper-2); font-size: 1.125rem; line-height: 1.5; }
-.index-row.small b { font-size: clamp(1.5rem, 3vw, 2.5rem); }
-.side-h { margin: 9vh 0 2vh; font-size: 1rem; font-weight: 700; }
-.preview { position: fixed; left: 0; top: 0; z-index: 70; width: min(28vw, 420px); aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; pointer-events: none; opacity: 0; scale: .7; transition: opacity 250ms, scale 400ms var(--ease-out); }
-.preview.on { opacity: 1; scale: 1; }
 
-/* ---------- What I make ---------- */
-.make { padding: 12vh var(--pad); border-top: 1px solid var(--line); }
-.make-intro { margin: -2vh 0 6vh; max-width: 40ch; font-size: var(--t-body-l); line-height: 1.35; color: var(--paper-2); }
-.offers { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.offer { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr); gap: 32px; align-items: center; padding: 32px 0; border-bottom: 1px solid var(--line); isolation: isolate; transition: color 400ms var(--ease-out); }
-.offer::before { content: ""; position: absolute; inset: 0 calc(var(--pad) * -1); z-index: -1; background: var(--oc); clip-path: inset(100% 0 0 0); transition: clip-path 500ms var(--ease-out); }
-.offer:hover, .offer:focus-within { color: var(--oi); }
-.offer:hover::before, .offer:focus-within::before { clip-path: inset(0 0 0 0); }
-.offer h3 { margin: 0; font-size: clamp(3rem, 7vw, 7rem); line-height: 1; padding-top: .1em; }
-.offer-text p { margin: 0 0 4px; font-size: 1.125rem; line-height: 1.5; max-width: 36ch; }
-.offer-text a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; font-size: 1rem; text-underline-offset: 4px; }
-.offer-text a:focus-visible { outline-color: currentColor; }
-.offer-clip { aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; border: 1px solid transparent; transform: rotate(-1.5deg); transition: transform 500ms var(--ease-out); }
-.offer:nth-child(even) .offer-clip { transform: rotate(1.5deg); }
-.offer:hover .offer-clip { transform: rotate(0deg) scale(1.03); }
+/* ---------- Selected Work: every project in one numbered list ---------- */
+.work { position: relative; padding: 14vh var(--pad) 12vh; }
+.work ul { list-style: none; margin: 0; padding: 0; }
+.wk-row { --oc: var(--pc); --oi: var(--pi); position: relative; isolation: isolate; display: grid; grid-template-columns: 3ch minmax(0, 6fr) minmax(0, 3fr) minmax(0, 4fr); column-gap: 24px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--line); text-decoration: none; transition: color 300ms; }
+.work li:last-child .wk-row { border-bottom: 1px solid var(--line); }
+.wk-row::before { content: ""; position: absolute; inset: 0 calc(var(--pad) * -1); z-index: -1; background: var(--oc); clip-path: inset(100% 0 0 0); transition: clip-path 520ms var(--ease-out); }
+.wk-n { font-size: 1rem; opacity: .6; }
+.wk-name { font-size: clamp(2.25rem, 6vw, 5.5rem); line-height: 1; padding-top: .08em; transition: transform 500ms var(--ease-out); }
+.wk-row.feat .wk-name { font-size: clamp(2.75rem, 8.4vw, 8rem); }
+.wk-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-weight: 700; font-size: 1rem; }
+.wk-line { color: var(--paper-2); font-size: 1.0625rem; line-height: 1.5; transition: color 300ms; }
+.wk-peek { display: none; }
+.tag { font-style: normal; font-weight: 700; font-size: var(--t-meta); padding: 3px 10px; border: 1px solid currentColor; border-radius: 999px; white-space: nowrap; }
+.wk-row:focus-visible { outline: 3px solid var(--paper); outline-offset: -3px; }
+@media (hover: hover) {
+  .wk-row:hover, .wk-row:focus-visible { color: var(--oi); }
+  .wk-row:hover::before, .wk-row:focus-visible::before { clip-path: inset(0 0 0 0); }
+  .wk-row:hover .wk-name, .wk-row:focus-visible .wk-name { transform: translateX(24px); }
+  .wk-row:hover .wk-line, .wk-row:focus-visible .wk-line { color: inherit; }
+}
+.side-h { margin: 9vh 0 2vh; font-size: 1rem; font-weight: 700; }
+.wk-row.small .wk-name { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+.wk-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; margin-top: 12vh; }
+.wk-cta p { margin: 0; max-width: 18ch; font: 400 clamp(2rem, 5vw, 4.5rem)/1 var(--head); }
+.preview { position: fixed; left: 0; top: 0; z-index: 70; width: min(28vw, 420px); aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; pointer-events: none; opacity: 0; scale: .8; transition: opacity 250ms, scale 350ms var(--ease-out); }
+.preview.on { opacity: 1; scale: 1; }
+@media (hover: none) {
+  .preview { display: none; }
+  .wk-peek { display: grid; grid-template-rows: 0fr; grid-column: 2 / -1; transition: grid-template-rows 500ms var(--ease-out); }
+  .wk-peek img { min-height: 0; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; }
+  .wk-row.armed .wk-peek { grid-template-rows: 1fr; margin-top: 14px; }
+}
+
+/* ---------- From brief to launch: each job takes the screen in turn ---------- */
+.do { position: relative; height: 100svh; margin-top: -30svh; overflow: hidden; pointer-events: none; } /* slides up over the tail of the hero so the leaving bar and the arriving job share the screen */
+.do-tab, .do-cta, .do-clip.on { pointer-events: auto; }
+.do-stage { position: absolute; inset: 0; padding: 0 var(--pad); }
+.do-reel { position: absolute; inset: 12svh var(--pad) 22svh; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.do-words { grid-area: 1 / 1 / 2 / 8; position: relative; z-index: 2; display: grid; margin: 0; padding: 0; list-style: none; font: 400 clamp(2.75rem, 9.5vw, 11rem)/.92 var(--head); letter-spacing: -.01em; text-wrap: balance; }
+.do-word { grid-area: 1 / 1; align-self: center; }
+.do-word:not(:first-child) { visibility: hidden; }
+.do-word .word { display: inline-block; white-space: nowrap; }
+.do-word .ch-mask { padding: .14em .06em .06em; margin: -.14em -.06em -.06em; }
+.do-clips { grid-area: 1 / 7 / 2 / 13; position: relative; align-self: center; aspect-ratio: 16 / 9; pointer-events: none; }
+.do-clip { position: absolute; inset: 0; display: block; overflow: hidden; border-radius: 14px; rotate: var(--tilt); box-shadow: var(--shadow-l); pointer-events: none; }
+.do-clip.on { pointer-events: auto; }
+.do-clip img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.do-clip:focus-visible { outline: 3px solid var(--black); outline-offset: 4px; }
+.do-tabs { position: absolute; left: var(--pad); right: var(--pad); bottom: 7svh; display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 0; padding: 0; list-style: none; }
+.do-tab { position: relative; min-width: 44px; min-height: 44px; padding: 0; background: none; border: 0; color: inherit; font: 600 1rem/1 var(--body); opacity: .4; transition: opacity 300ms; cursor: pointer; }
+.do-tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 500ms var(--ease-out); }
+.do-tab:hover, .do-tab:focus-visible { opacity: .8; }
+.do-tab.on { opacity: 1; }
+.do-tab.on::after { transform: scaleX(1); }
+.do-tab:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+.do-cta { position: absolute; right: var(--pad); bottom: calc(7svh - 2px); }
+/* Portrait tablets: stack the job word over its clip, as on phones, so the stage is filled and not a small pair floating mid-screen. */
+@media (min-width: 761px) and (max-aspect-ratio: 1/1) {
+  .do-reel { inset: 12svh var(--pad) 24svh; grid-template-rows: auto auto; row-gap: 28px; align-content: center; }
+  .do-words { grid-area: 1 / 1 / 2 / -1; font-size: clamp(3.5rem, 13vw, 9rem); text-align: center; }
+  .do-clips { grid-area: 2 / 2 / 3 / 12; }
+  .do-tabs { bottom: 10svh; gap: 0 28px; }
+}
+@media (max-width: 760px) {
+  .wk-row { grid-template-columns: 3ch minmax(0, 1fr); row-gap: 6px; }
+  .wk-meta, .wk-line { grid-column: 2; }
+  .do-reel { inset: 10svh var(--pad) 26svh; grid-template-rows: auto auto; row-gap: 20px; align-content: center; }
+  .do-words { grid-area: 1 / 1 / 2 / -1; font-size: clamp(2.75rem, 15vw, 5rem); text-align: center; }
+  .do-clips { grid-area: 2 / 2 / 3 / 12; }
+  .do-tabs { bottom: 14svh; gap: 0 18px; }
+  .do-cta { left: var(--pad); right: auto; bottom: 5svh; }
+}
 
 /* ---------- About ---------- */
 .about { padding: 12vh var(--pad); border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 32px; }
@@ -280,9 +307,6 @@ main { position: relative; z-index: 1; }
 .ov-next:hover b { transform: translateX(2vw); }
 
 @media (max-width: 759.98px), (max-aspect-ratio: 20/23) {
-  .peek { width: calc((100vw - var(--pad) * 2 - 20px) / 3); aspect-ratio: 1; }
-  .peek-row { gap: 10px; }
-  .hero-peek { bottom: -28px; gap: 20px; }
 }
 
 /* ---------- Phones ---------- */
@@ -290,36 +314,23 @@ main { position: relative; z-index: 1; }
   .nav nav { gap: 20px; }
   .nav-cta { display: none; } /* phones: the hero and the contact section carry "Start a project" */
   .nav-contact { display: inline-flex !important; }
-  .hero { place-items: start center; padding-top: 112px; padding-bottom: 150px; }
+  .hero { place-items: start center; padding-top: 112px; padding-bottom: 96px; }
   .pb { padding: 14px 14px 12px; }
   .pb-field { min-height: 64px; }
   .pb input, .pb-typed { font-size: 1.125rem; } /* 16px or more: iOS won't zoom the page */
   .pb-results { position: static; margin-top: 10px; }
   .pb-chips { gap: 6px; }
-  .scene { min-height: 100svh; padding: 96px var(--pad) 64px; }
-  .work .scene:last-of-type { padding-bottom: calc(64px + 14vh); }
-  .index, .make, .about { padding-block: 96px; }
   .contact { padding-top: 96px; }
   .link-row { grid-template-columns: 1fr auto; gap: 8px 16px; }
   .link-label { grid-column: 1 / -1; }
   .contact-big { font-size: clamp(2.5rem, 12vw, 4rem); }
-  .side-h { margin-top: 56px; }
   .footer { margin-top: 40px; }
-  .scene-media, .scene-line { grid-column: 1 / -1; }
-  .scene-media { margin-top: 16px; }
-  .index-row { grid-template-columns: 1fr; gap: 6px; }
-  .preview { display: none; }
-  .offer { grid-template-columns: 1fr; gap: 16px; }
   .about { grid-template-columns: 1fr; }
   .ov-imac { grid-row: auto; }
   .ov-imac, .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
   .ov-story { margin-top: 4vh; }
 }
 @media (min-width: 761px) and (max-width: 1100px) {
-  .index-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 8px; }
-  .index-row b { grid-row: span 2; }
-  .offer { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .offer h3 { grid-column: 1 / -1; }
   .ov-imac { grid-column: 1 / -1; grid-row: auto; }
   .ov-story, .ov-facts, .ov-link { grid-column: 1 / -1; }
   .ov-story { margin-top: 4vh; }

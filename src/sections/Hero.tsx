@@ -7,8 +7,8 @@ import { featured } from "../lib/projects";
 import { motion, reduceMotion } from "../lib/motion";
 import { getLenis } from "../hooks/useSmoothScroll";
 import { PromptBar } from "../components/PromptBar";
-import { HeroPeek } from "../components/HeroPeek";
 import { OpeningLogo } from "../components/OpeningLogo";
+import { OpeningRain } from "../components/OpeningRain";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -16,12 +16,13 @@ type Props = { playing: boolean; onSeen: () => void; onOpen: (slug: string) => v
 
 /** Phones and tall screens get a square window; wide screens a rectangle. */
 const squareShaped = () => innerWidth < 760 || innerHeight > innerWidth * 1.15;
+const rainWords = [site.name, ...site.make.jobs.map((j) => j.name)];
 const FULL = "inset(0px 0px 0px 0px round 0px 0px 0px 0px)";
 /** Width of the closed window: a rectangle as wide as the bar, or a square on phones. */
 const windowWidth = () => (squareShaped() ? Math.min(innerWidth * 0.92, 360) : Math.min(760, innerWidth * 0.92));
 
 /**
- * A light headline, a prompt bar that finds the work, and real work peeking up from the bottom.
+ * A light headline, a prompt bar that finds the work,.
  * The opening (once per session) is driven by the visitor, not a timer: the page starts as the first project's colour with a paper window
  * holding the logo animation, and the window opens to the full screen as you scroll (desktop, scrubbed both ways) or on your first swipe (touch, one go).
  * Tapping, typing or waiting a few seconds opens it too. Afterwards the same colour rises over the hero so Work begins without a seam.
@@ -35,7 +36,7 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
     if (!playing) return;
     const el = root.current!, q = gsap.utils.selector(el), paper = q(".hero-paper");
     const nav = document.querySelector<HTMLElement>(".nav")!;
-    const later = [nav, ...q(".pb-row"), ...q(".peek-label"), ...q(".peek")]; // the tiles, not their row: the scroll hand-off fades the row, and two tweens on one element fight when you scroll back up
+    const later = [nav, ...q(".pb-row")];
     const split = SplitText.create(q(".hero-h1")[0], { type: "words", mask: "words", wordsClass: "hw" });
 
     // The closed window is centred in the screen: a rectangle as wide as the bar, or a square on phones.
@@ -67,7 +68,7 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
       .to(later, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06, ease: motion.easeSoft }, 1);
 
     let idle: ReturnType<typeof setTimeout>;
-    const st = scrubbed ? ScrollTrigger.create({ animation: tl, trigger: track.current, start: "top top", end: () => `+=${innerHeight}`, scrub: 0.5, invalidateOnRefresh: true }) : null;
+    const st = scrubbed ? ScrollTrigger.create({ animation: tl, trigger: track.current, start: "top top", end: () => `+=${innerHeight}`, scrub: true, invalidateOnRefresh: true }) : null;
     const open = () => {
       clearTimeout(idle);
       if (tl.progress() === 1 || (!scrubbed && tl.isActive())) return;
@@ -106,9 +107,13 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
   useLayoutEffect(() => {
     if (reduceMotion()) return;
     const ctx = gsap.context(() => {
-      gsap.timeline({ scrollTrigger: { trigger: track.current, start: () => (scrubbed ? innerHeight : 0), end: () => (scrubbed ? 2 : 1) * innerHeight, scrub: 0.6, invalidateOnRefresh: true } })
-        .to([".hero-inner", ".hero-peek"], { yPercent: -8, scale: 0.94, autoAlpha: 0, duration: 0.75, ease: "none" }, 0)
-        .fromTo(".hero-rise", { clipPath: "ellipse(75% 0% at 50% 100%)" }, { clipPath: "ellipse(120% 135% at 50% 100%)", duration: 1 - motion.riseStart, ease: "power2.inOut", immediateRender: false }, motion.riseStart);
+      gsap.timeline({ scrollTrigger: { trigger: track.current, start: () => (scrubbed ? innerHeight : 0), end: () => (scrubbed ? 2 : 1) * innerHeight, scrub: true, invalidateOnRefresh: true } })
+        // the band round the bar draws its lines back in, the headline lifts and shrinks away, the bar tips and rises off the top of the screen
+        .fromTo(".hero-stage", { "--ln": 1 }, { "--ln": 0, backgroundColor: "rgba(11,11,11,0)", duration: 0.5, ease: "power2.inOut" }, 0)
+        .to(".hero-grid", { scaleY: 0, duration: 0.55, ease: "power2.inOut" }, 0.05)
+        .to(".hero-h1", { y: () => -innerHeight * 0.3, scale: 0.7, autoAlpha: 0, duration: 0.75, ease: "power2.in" }, 0)
+        .to(".pb", { y: () => -innerHeight * 0.5, rotate: -4, scale: 0.82, autoAlpha: 0, duration: 0.85, ease: "power2.in" }, 0.08)
+        .to(".hero-cue", { autoAlpha: 0, duration: 0.2 }, 0);
     }, root);
     return () => ctx.revert();
   }, [scrubbed]);
@@ -117,16 +122,14 @@ export function Hero({ playing, onSeen, onOpen }: Props) {
     <div ref={track} className={`hero-track${scrubbed ? " scrubbed" : ""}`}>
       <section ref={root} className={`hero${opening ? " opening" : ""}`} aria-labelledby="hero-name" data-paint="var(--paper)" data-ink="var(--black)"
         style={{ "--rise": featured[0]?.color, "--ow": playing ? `${windowWidth()}px` : undefined } as React.CSSProperties}>
+        {playing && <OpeningRain words={rainWords} active={opening} />}
         <div className="hero-paper" aria-hidden="true" />
-        <div className="hero-grid" aria-hidden="true" />
         <div className="hero-inner">
           <h1 className="hero-h1" id="hero-name">{site.hero.heading}</h1>
-          <div className="hero-stage"><PromptBar typing={!opening} onOpen={onOpen} /></div>
+          <div className="hero-stage"><div className="hero-grid" aria-hidden="true" /><PromptBar typing={!opening} onOpen={onOpen} /></div>
         </div>
-        <HeroPeek onOpen={onOpen} />
         {playing && <OpeningLogo />}
         <div className="hero-cue" aria-hidden="true" />
-        <div className="hero-rise" aria-hidden="true" />
       </section>
     </div>
   );

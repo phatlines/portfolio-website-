@@ -13,7 +13,9 @@ export type Project = {
   type: string; // "Website", "Web app", "iOS + Android", "Mac app", "Side exploration"
   year: number;
   role: string;
-  line: string; // one line for the work list and featured scene
+  line: string; // one line for the work list
+  client?: string; // shown in Selected Work when set (TODO: see TODO.md)
+  result?: string; // one line on the outcome, shown instead of `line` when set (TODO: see TODO.md)
   story: string[]; // 2 to 3 short paragraphs for the overlay
   stack: string[];
   status: "live" | "in-progress" | "hidden"; // only "live" is shown on the site

@@ -45,8 +45,12 @@ export const motion = {
   skewMax: 4, // degrees of tilt on the scene clips at full scroll speed
   skewPerVelocity: 0.12,
   sweep: 0.9, // next-project arch sweep
-  lenisLerp: 0.085, // smooth-scroll weight: lower is heavier and smoother
-  riseStart: 0.25, // where in the hero's exit the first project's colour starts to rise (0 to 1)
+  lenisLerp: 0.07, // smooth-scroll weight: lower is heavier and smoother
+  rainSpeed: 90, // px per second the opening letter-rain falls
+  doScroll: 2.3, // screens of scroll the jobs section stays pinned
+  doStepIn: 0.7, // a job word rising in
+  doStepOut: 0.45,
+  doStepGap: 1.05, // scroll time given to each job
   easeOut: "expo.out",
   easeSoft: "power3.out",
 } as const;

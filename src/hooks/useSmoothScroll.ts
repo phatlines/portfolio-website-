@@ -14,7 +14,7 @@ export const getLenis = () => lenis;
 export function useSmoothScroll() {
   useEffect(() => {
     if (reduceMotion()) return;
-    lenis = new Lenis({ lerp: motion.lenisLerp, wheelMultiplier: 0.9, anchors: true });
+    lenis = new Lenis({ lerp: motion.lenisLerp, wheelMultiplier: 1, anchors: true });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (t: number) => lenis?.raf(t * 1000);
     gsap.ticker.add(tick);

@@ -69,8 +69,8 @@ export function App() {
       <TopBar />
       <main id="top" inert={slug ? true : undefined}>
         <Hero playing={playLeader} onSeen={onSeen} onOpen={open} />
-        <Work onOpen={open} ready />
         <Make onOpen={open} />
+        <Work onOpen={open} ready />
         <About />
         <Contact />
       </main>

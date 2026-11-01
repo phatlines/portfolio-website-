@@ -1,8 +1,4 @@
 // Every word on the page that isn't project data. Approved in COPY.md (2026-10-26).
-import type { Media } from "./types";
-
-/** An offer in What I make. `clip` overrides the linked project's own clip in that row. */
-type Offer = { title: string; line: string; example: string; exampleLabel: string; clip?: Media };
 export const site = {
   name: "phatlines",
   person: "Muyiwa Adebayo",
@@ -28,8 +24,6 @@ export const site = {
     send: "Find my work",
     suggest: ["spori", "invoicely", "kapture"], // shown when the bar is focused and empty: a website, a web app, a Mac app
     suggestedLabel: "Work to start with", // read out by screen readers only
-    peekTitle: "Three files from the desk", // the line above the folders
-    peekLabel: "Featured work", // read out by screen readers only
     open: "Open", // + the project name, read out by screen readers only
     resultsLabel: "Matching projects",
     noMatch: "No exact match. Here's everything I've built.",
@@ -37,16 +31,18 @@ export const site = {
     matches: "matches",
   },
 
-  work: { heading: "Selected work", restHeading: "More work", sideHeading: "Side projects", sceneLabel: "Project" },
+  work: { heading: "Selected Work", sideHeading: "Side projects", hire: "Like what you see? Let's make yours." },
 
   make: {
-    heading: "What I make",
-    intro: "Two things, sometimes three: the product, the site that sells it, and, when you want one, a launch film.",
-    offers: [
-      { title: "Websites", line: "Marketing sites and portfolios that move. You bring the brief; I design and build it, with reviews together along the way.", example: "spori", exampleLabel: "See SPORI" },
-      { title: "Apps", line: "Web, iPhone, Android and Mac apps, from the first screen to the build that ships.", example: "invoicely", exampleLabel: "See invoicely", clip: { kind: "video", src: "/media/invoicely-app.mp4", poster: "/media/invoicely-app.jpg", alt: "invoicely's late-payment calculator" } },
-      { title: "Launch films", line: "Short films that show what your product does, cut for your site and your socials.", example: "invoicely", exampleLabel: "See the invoicely launch film", clip: { kind: "video", src: "/media/invoicely-film.mp4", poster: "/media/invoicely-film.jpg", alt: "The opening of the invoicely launch film" } },
-    ] as Offer[],
+    heading: "From brief to launch",
+    jobs: [ // each job is shown next to a project that proves it
+      { name: "Websites", example: "spori" },
+      { name: "Landing pages", example: "african-skin-code" },
+      { name: "SaaS", example: "invoicely" },
+      { name: "iOS apps", example: "fitty" },
+      { name: "Motion design", example: "spec-ads" },
+    ],
+    open: "Open", // + the project name, read out by screen readers only
   },
 
   about: {

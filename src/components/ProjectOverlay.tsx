@@ -24,7 +24,7 @@ let sweeping = false;
 addEventListener("click", (e) => {
   const a = (e.target as Element).closest?.('a[href^="#work/"]');
   if (!a || a.closest(".overlay")) { pending = null; return; }
-  const clip = a.matches(".scene-media") ? a : a.closest(".offer")?.querySelector(".offer-clip");
+  const clip = a.matches(".do-clip") ? a : a.closest(".wk-row") ? document.querySelector(".preview.on") : null; // a job clip, or the preview that follows the cursor over a work row
   const src = clip ?? a;
   pending = { rect: src.getBoundingClientRect(), radius: parseFloat(getComputedStyle(src).borderTopLeftRadius) || 0, clip: !!clip };
 }, true);
