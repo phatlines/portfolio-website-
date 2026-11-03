@@ -1,6 +1,8 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Draggable } from "gsap/Draggable";
+import { InertiaPlugin } from "gsap/InertiaPlugin";
 import { site } from "../content/site";
 import type { Project } from "../content/types";
 import { reel, featured, rest, explorations, findProject } from "../lib/projects";
@@ -13,7 +15,7 @@ import { Device } from "../components/Device";
 import { Folder } from "../components/Folder";
 import { ArrowOut } from "../components/Icons";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Draggable, InertiaPlugin);
 type Open = (slug: string) => void;
 
 /** One featured project, large in its device, with what it is, my role, its stack and its links. */
@@ -55,22 +57,38 @@ export function Work({ onOpen }: { onOpen: Open }) {
   const shownMore = [...rest, ...explorations].filter(keep);
   const stage = ["invoicely", "fitty", "kapture"].map(findProject).filter((p): p is Project => !!p?.screen);
 
-  // Devices rise into place, spec columns follow; SPORI's full page scrolls inside its browser as you scroll past it.
+  // The stage's windows rise into place and can then be dragged round it (by the title bar on touch, so a swipe still scrolls the page).
+  // Each project's screen slides in from the left and its words from the right as you scroll to it (each from its own side when the columns swap).
+  // SPORI's full page scrolls inside its browser as you scroll past it.
   useLayoutEffect(() => {
     if (reduceMotion()) return;
     const ctx = gsap.context(() => {
-      gsap.from(".stage .dev", { y: 48, autoAlpha: 0, duration: motion.device, stagger: motion.deviceStagger, ease: motion.easeOut, scrollTrigger: { trigger: ".stage", start: "top 85%", once: true } });
+      gsap.from(".stage .dev", { yPercent: 12, autoAlpha: 0, duration: motion.device, stagger: motion.deviceStagger, ease: motion.easeOut, scrollTrigger: { trigger: ".stage", start: "top 85%", once: true } });
+      const touch = matchMedia("(pointer: coarse)").matches;
+      gsap.utils.toArray<HTMLElement>(".stage .dev").forEach((d) => Draggable.create(d, {
+        bounds: ".stage", inertia: true, edgeResistance: 0.85, zIndexBoost: true,
+        trigger: touch ? d.querySelector<HTMLElement>(".dev-bar") ?? d : d,
+        onPress: () => d.classList.add("held"), onRelease: () => d.classList.remove("held"),
+      }));
+      const wide = matchMedia("(min-width: 1100.02px)").matches;
       gsap.utils.toArray<HTMLElement>(".feat").forEach((f) => {
-        gsap.from(f.querySelector(".dev"), { y: 32, autoAlpha: 0, duration: 0.8, ease: motion.easeOut, scrollTrigger: { trigger: f, start: "top 80%", once: true } });
-        gsap.from(f.querySelectorAll(".feat-spec > *"), { y: 12, autoAlpha: 0, duration: 0.6, stagger: 0.05, delay: 0.1, ease: motion.easeSoft, scrollTrigger: { trigger: f, start: "top 80%", once: true } });
-        const tall = f.querySelector<HTMLElement>(".dev-tall img");
-        if (tall) gsap.to(tall, { y: () => -(tall.offsetHeight - tall.parentElement!.offsetHeight), ease: "none", scrollTrigger: { trigger: f, start: "top 70%", end: "bottom 20%", scrub: 0.6, invalidateOnRefresh: true } });
+        const side = f.classList.contains("flip") && wide ? -1 : 1; // 1: screen from the left, words from the right
+        const scrub = { trigger: f, start: "top 95%", end: "top 45%", scrub: 0.8 };
+        gsap.fromTo(f.querySelector(".feat-stage"), { x: -motion.slideIn * side, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power2.out", scrollTrigger: scrub });
+        gsap.fromTo(f.querySelectorAll(".feat-spec > *"), { x: motion.slideIn * side, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.08, ease: "power2.out", scrollTrigger: scrub });
+        const tall = f.querySelector<HTMLImageElement>(".dev-tall img");
+        if (tall) {
+          gsap.to(tall, { y: () => -(tall.offsetHeight - tall.parentElement!.offsetHeight), ease: "none", scrollTrigger: { trigger: f, start: "top 70%", end: "bottom 20%", scrub: 0.6, invalidateOnRefresh: true } });
+          if (!tall.complete) tall.addEventListener("load", () => ScrollTrigger.refresh(), { once: true }); // lazy: its height is 0 until it loads
+        }
       });
       gsap.from(".fd-item", { y: 24, autoAlpha: 0, duration: 0.6, stagger: 0.06, ease: motion.easeSoft, scrollTrigger: { trigger: ".folders", start: "top 85%", once: true } });
     }, root);
     document.fonts.ready.then(() => ScrollTrigger.refresh());
     return () => ctx.revert();
   }, []);
+  // Filtering moves the projects: measure the scroll animations again so none is left waiting at its old place, invisible.
+  useEffect(() => { ScrollTrigger.refresh(); }, [query]);
 
   return (
     <section className="work section" id="work" ref={root} aria-labelledby="work-h">
@@ -81,6 +99,7 @@ export function Work({ onOpen }: { onOpen: Open }) {
 
       <div className="stage" aria-hidden="true">
         {stage.map((p) => <Device key={p.slug} p={p} className={`st-${p.slug}`} />)}
+        <span className="stage-hint">{site.work.dragHint}</span>
       </div>
 
       <div className="finder">

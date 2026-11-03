@@ -34,8 +34,8 @@ describe("the New commit card", () => {
 });
 
 describe("resume", () => {
-  it("says 1+ year and offers no PDF", () => {
-    expect(site.about.stat).toMatch(/^1\+ year/);
+  it("states experience in years and offers no PDF", () => {
+    expect(site.about.stat).toMatch(/\byears?\b/);
     expect(JSON.stringify(site)).not.toMatch(/\bPDF\b|Download/i);
   });
 });

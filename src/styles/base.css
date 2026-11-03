@@ -1,12 +1,12 @@
-/* Display: Prox Yo by FFEEARR (free licence, commercial use allowed: src/fonts/display/LICENSE.txt). Text: Hanken Grotesk. */
+/* Display: Prox Yo by FFEEARR (free licence, commercial use allowed: src/fonts/display/LICENSE.txt). Text: Josefin Sans (SIL OFL: src/fonts/body/OFL.txt). */
 @font-face { font-family: "Prox Yo"; src: url(../fonts/display/ProxYo-Regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "Prox Yo"; src: url(../fonts/display/ProxYo-Italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: "Hanken Grotesk"; src: url(/fonts/hanken.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Josefin Sans"; src: url(../fonts/body/JosefinSans-Variable.woff2) format("woff2"); font-weight: 100 700; font-display: swap; }
 
 /* ---------- Tokens (docs/v1.1/SPEC.md) ---------- */
 :root {
-  --head: "Prox Yo", "Hanken Grotesk", system-ui, sans-serif;
-  --body: "Hanken Grotesk", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --head: "Prox Yo", "Josefin Sans", system-ui, sans-serif;
+  --body: "Josefin Sans", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --page: #ffffff;

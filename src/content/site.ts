@@ -12,10 +12,10 @@ export const site = {
 
   // One source for availability: the nav dot, the hero line and the Availability section all read this.
   availability: {
-    status: "Available now",
-    line: "Available now. November and December open.",
+    status: "Available for work",
+    line: "Available for work.",
     months: [
-      { m: "Nov", state: "open", note: "All month" },
+      { m: "Nov", state: "open", note: "Open" },
       { m: "Dec", state: "open", note: "Open" },
       { m: "Jan", state: "ask", note: "Ask" },
       { m: "Feb", state: "ask", note: "Ask" },
@@ -33,8 +33,7 @@ export const site = {
   loader: {
     cmd: "phatlines@1.1 build",
     steps: [
-      { name: "fonts", detail: "prox yo, hanken" },
-      { name: "hero", detail: "portrait, colour" },
+      { name: "fonts", detail: "prox yo, josefin" },
       { name: "work", detail: "8 projects" },
       { name: "resume", detail: "1+ year" },
     ],
@@ -44,16 +43,18 @@ export const site = {
 
   hero: {
     heading: "I build websites and apps.",
+    roles: ["Software engineer", "Motion designer", "Web designer", "iOS developer"], // typed in turn in the box beside my name
+    // The hero is an editor window: these are its chrome, not content.
+    ide: { title: "phatlines — portfolio", explorer: "Explorer", folder: "portfolio", file: "hero.tsx", branch: "main", meta: ["Ln 1, Col 1", "UTF-8", "TypeScript React"] },
     lead: "Websites, web apps, iOS and Mac apps, designed and built end to end.",
     secondary: "See the work",
     resume: "Resume",
-    photoAlt: "Muyiwa Adebayo looking up, in clear glasses and an M pendant",
-    revealHint: "Move over the photo",
   },
 
   work: {
-    heading: "Selected Work",
-    count: "7 shipped in 2026 · 1 side project",
+    heading: "Featured Work",
+    count: "7 project built so far · 1 side project",
+    dragHint: "Drag the windows around",
     question: "What are you building today?",
     all: "All",
     chips: [
@@ -71,7 +72,7 @@ export const site = {
   },
 
   process: {
-    heading: "From brief to launch",
+    heading: "From your brief to launch",
     sub: "How we'd work together",
     intro: "I work end to end: you bring the brief, I design and build it, and we review it together until it's right.",
     steps: [
@@ -91,9 +92,9 @@ export const site = {
 
   about: {
     heading: "About and resume",
-    stat: "1+ year shipping production websites and apps",
+    stat: "2 years of shipping websites and apps",
     paragraphs: [
-      "phatlines is a software engineer based in the United Kingdom.",
+      "Muyiwa is a software engineer based in the United Kingdom.",
       "I work end to end: you bring the brief, I design and build it, and we review it together until it's right.",
     ],
     rolesHeading: "Roles",
@@ -101,8 +102,6 @@ export const site = {
     experienceHeading: "Experience",
     experience: [ // placeholders after the first row: edit these
       { when: "2025 – now", role: "Software engineer, freelance", where: "phatlines", what: "Websites, web apps, iOS and Mac apps for founders, studios and small businesses" },
-      { when: "[Year] – [Year]", role: "[Job title]", where: "[Company]", what: "[What you shipped and the result]" },
-      { when: "[Year]", role: "[Course or certificate]", where: "[Institution]", what: "[Optional]" },
     ],
     stackHeading: "Stack",
     stackNote: "used in shipped projects",
@@ -133,7 +132,7 @@ export const site = {
     open: "Open",
     // The "New commit" card: the visitor writes their enquiry as a commit, and it opens their email filled in.
     card: {
-      title: "New commit",
+      title: "New Project",
       typeLabel: "Type",
       types: [{ label: "Website", scope: "website" }, { label: "Web app", scope: "web-app" }, { label: "iOS + Android", scope: "mobile" }, { label: "Mac app", scope: "mac" }],
       timelineLabel: "Timeline",
@@ -149,9 +148,6 @@ export const site = {
   },
 
   footer: {
-    built: "Built by Muyiwa Adebayo with React, Vite and GSAP",
-    deployed: "deployed",
-    london: "London",
     rights: "© 2026 phatlines. All rights reserved.",
   },
 
@@ -166,5 +162,10 @@ export const site = {
     noPath: "There's nothing at this address.",
     didYouMean: "Did you mean:",
     home: "Back to the start",
+    // The 404 is the hero's editor after a failed build: these are its chrome.
+    ide: {
+      title: "phatlines — build failed", file: "router.tsx", files: ["hero.tsx", "work.tsx", "router.tsx", "resume.tsx", "contact.tsx"],
+      problems: "Problems", output: "Output", terminal: "Terminal", failed: "Failed to compile.",
+    },
   },
 };

@@ -3,7 +3,6 @@ import { gsap } from "gsap";
 import { site } from "../content/site";
 import { reel } from "../lib/projects";
 import { motion } from "../lib/motion";
-import { HERO_SRC } from "./HeroReveal";
 import { Tick } from "./Icons";
 
 const loadImage = (src: string) => new Promise<void>((done) => { const i = new Image(); i.onload = i.onerror = () => done(); i.src = src; });
@@ -23,8 +22,7 @@ export function BuildLoader({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const t0 = performance.now();
     const steps = [
-      Promise.all([document.fonts.load("1em 'Prox Yo'"), document.fonts.load("1em 'Hanken Grotesk'")]),
-      Promise.all([loadImage(HERO_SRC.bw), loadImage(HERO_SRC.colour)]),
+      Promise.all([document.fonts.load("1em 'Prox Yo'"), document.fonts.load("1em 'Josefin Sans'")]),
       Promise.all(reel.slice(0, 4).map((p) => loadImage(p.media.poster))),
       pageLoaded(),
     ];

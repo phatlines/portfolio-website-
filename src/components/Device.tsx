@@ -22,10 +22,10 @@ export function Device({ p, className = "" }: { p: Project; className?: string }
     return <div className={`dev dev-phone ${className}`} style={style} role="img" aria-label={p.media.alt} />;
   }
   const screen = s.kind === "video"
-    ? <video ref={vid} src={s.src} poster={s.poster} muted loop playsInline preload="metadata" aria-label={p.media.alt} />
+    ? <video ref={vid} src={s.src} poster={s.poster} muted loop playsInline preload="none" aria-label={p.media.alt} />
     : s.kind === "tall"
-      ? <div className="dev-tall" role="img" aria-label={p.media.alt}><img src={s.src} alt="" loading="lazy" /></div>
-      : <img src={s.src} alt={p.media.alt} loading="lazy" />;
+      ? <div className="dev-tall" role="img" aria-label={p.media.alt}><img src={s.src} alt="" loading="lazy" decoding="async" /></div>
+      : <img src={s.src} alt={p.media.alt} loading="lazy" decoding="async" />;
   return (
     <div className={`dev dev-${s.frame} ${className}`}>
       <div className="dev-bar" aria-hidden="true"><i /><i /><i />{s.url && <span>{s.url}</span>}</div>

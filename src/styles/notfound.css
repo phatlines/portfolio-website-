@@ -1,14 +1,44 @@
-/* ---------- 404: a compiler error ---------- */
-.nf { min-height: 100svh; background: var(--ink); color: #fff; }
+/* ---------- 404: the hero's editor after a failed build (window chrome comes from .ide in site.css) ---------- */
+.nf { --red: #ff6b5e; min-height: 100svh; background: var(--night); color: #fff; }
 .nf .nav { color: #fff; background: none; box-shadow: none; }
 .nf .nav-cta { display: none; }
-.nf-main { max-width: calc(var(--max) + var(--pad) * 2); margin: 0 auto; min-height: 100svh; display: grid; align-content: center; justify-items: start; gap: 14px; padding: 104px var(--pad) 64px; }
-.nf-trace { margin: 0; padding: 0; list-style: none; line-height: 1.8; color: var(--ink-soft); }
-.nf-err { color: #ff8f7a; font-weight: 600; }
-.nf-404 { font: 400 clamp(7rem, 26vw, 22rem)/.8 var(--head); color: #fff; margin: 8px 0 6px; font-variant-numeric: tabular-nums; }
-.nf-h { font: 700 clamp(1.75rem, 4vw, 3rem)/1.1 var(--body); max-width: 18ch; }
+.nf-main { display: grid; min-height: 100svh; padding: 76px var(--pad) var(--pad); }
+.nf-ide { grid-template-rows: auto 1fr auto; }
+.nf-pane { grid-template-rows: auto auto 1fr; }
+.ide-file.nf-bad, .ide-tabs .nf-bad { color: var(--red); box-shadow: inset 2px 0 0 var(--red); background: rgb(255 107 94 / .1); }
+.ide-tabs .nf-bad { box-shadow: inset 0 2px 0 var(--red); }
+
+/* The failing file, with line numbers and the bad line underlined */
+.nf-code { counter-reset: ln; margin: 0; padding: 16px 0; list-style: none; font: 400 14px/26px var(--mono); color: #c9d1cc; white-space: pre; overflow-x: auto; }
+.nf-code li { counter-increment: ln; padding-right: 16px; }
+.nf-code li::before { content: counter(ln); display: inline-block; width: 3.2em; padding-right: 1.2em; text-align: right; color: rgb(255 255 255 / .22); }
+.nf-code li.err { background: rgb(255 107 94 / .09); box-shadow: inset 2px 0 0 var(--red); }
+.nf-squiggle { position: relative; display: inline-block; }
+.nf-squiggle::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 4px; background: radial-gradient(circle at 50% 0, transparent 2px, var(--red) 2px 3px, transparent 3px) 0 0 / 6px 4px repeat-x; }
+.nf-lens { margin-left: 2em; color: var(--red); opacity: .85; font-style: italic; }
+
+/* The output panel: the build log, the big 404, and the way back */
+.nf-out { display: grid; grid-template-rows: auto 1fr; border-top: 1px solid var(--ide-line); }
+.nf-out-tabs { display: flex; gap: 22px; padding: 0 18px; height: 34px; align-items: center; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+.nf-out-tabs .on { color: #fff; box-shadow: inset 0 -1px 0 #fff; align-self: stretch; display: flex; align-items: center; }
+.nf-out-tabs b { display: inline-grid; place-items: center; min-width: 18px; height: 18px; margin-left: 4px; border-radius: 9px; background: var(--red); color: #000; font-size: 11px; }
+.nf-out-body { display: grid; align-content: start; justify-items: start; gap: 12px; padding: 14px 18px 26px; }
+.nf-log { margin: 0; padding: 0; list-style: none; line-height: 1.8; color: var(--ink-soft); }
+.nf-prompt { color: var(--green-on-ink); }
+.nf-fail { color: var(--red); font-weight: 600; }
+.nf-file { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgb(255 255 255 / .3); }
+.nf-err { color: var(--red); }
+.nf-404 { font: 400 clamp(4rem, 9vw, 7.5rem)/.8 var(--head); color: #fff; margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+.nf-h { font: 700 clamp(1.5rem, 3vw, 2.5rem)/1.1 var(--body); max-width: 20ch; }
 .nf-path { color: var(--ink-soft); font-size: 1.125rem; overflow-wrap: anywhere; }
 .nf-path b { color: #fff; }
-.nf-mean { margin-top: 10px; font: 600 var(--t-meta) var(--mono); color: var(--green-on-ink); }
+.nf-mean { margin-top: 6px; font: 600 var(--t-meta) var(--mono); color: var(--green-on-ink); }
 .nf-links { display: flex; flex-wrap: wrap; gap: 0 26px; margin: 4px 0 0; padding: 0; list-style: none; }
+.nf-status { background: #7a2620; color: #fff; }
+.nf-count { font-weight: 600; }
 .nf :focus-visible { outline-color: var(--green-on-ink); }
+@media (max-width: 767.98px) {
+  .nf-main { padding: 72px 10px 10px; }
+  .nf-code { font-size: 12px; line-height: 22px; }
+  .nf-lens { display: none; }
+}

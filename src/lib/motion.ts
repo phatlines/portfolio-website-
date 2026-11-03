@@ -13,16 +13,17 @@ export const motion = {
   rowStagger: 0.04,
   device: 0.9,
   deviceStagger: 0.12,
+  slideIn: 110, // px a featured project's screen and words travel as they scroll in
+  // hero: the job title typing in its box (ms)
+  roleType: 70,
+  roleErase: 35,
+  roleHold: 1600,
   // controls
   scramble: 0.4, // a primary button's label resolving
   journalHold: 1.6, // "Coming soon" stays this long
   menu: 0.7,
   folderCover: 0.35,
   folderPop: 0.45,
-  // hero reveal: the colour photo "compiles in" as blocks round the pointer
-  revealCell: 12, // CSS px per block
-  revealRadius: 90, // CSS px
-  revealDecay: 0.92, // per frame
   // project overlay (unchanged from v1)
   overlayIn: 0.6,
   cutIn: 0.85,
