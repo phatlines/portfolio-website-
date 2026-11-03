@@ -25,7 +25,7 @@ export const site = {
   },
 
   nav: {
-    work: "Work", process: "Process", resume: "Resume", journal: "Journal", journalSoon: "Coming soon", contact: "Contact",
+    work: "Work", process: "Process", resume: "Resume", journal: "Journal", contact: "Contact",
     cta: "Start a project", skip: "Skip to the work", menuOpen: "Open menu", menuClose: "Close menu", main: "Main",
   },
 
@@ -63,11 +63,11 @@ export const site = {
       { label: "iOS + Android", query: "ios android" },
       { label: "Mac app", query: "mac app" },
     ],
-    noMatch: "No exact match. Here's everything I've built.",
+    noMatch: "Not existing yet. Here's everything I've built.",
     role: "Role", stack: "Stack", view: "View project", live: "Live site",
     moreHeading: "More work",
     sideHeading: "Side projects",
-    hire: "Like what you see? Let's make yours.",
+    hire: "Like what you see? Let's build yours.",
     open: "Open", // + the project name, read out by screen readers only
   },
 
@@ -95,17 +95,17 @@ export const site = {
     stat: "2 years of shipping websites and apps",
     paragraphs: [
       "Muyiwa is a software engineer based in the United Kingdom.",
-      "I work end to end: you bring the brief, I design and build it, and we review it together until it's right.",
+      "We work end to end: you bring the brief, I design and build it, and we review it together until it's right.",
     ],
     rolesHeading: "Roles",
-    filmsNote: "I also make motion films on the side, which is where the care for interface motion comes from.",
+    filmsNote: "We also make motion films on the side, which is where the care for interface motion comes from.",
     experienceHeading: "Experience",
     experience: [ // placeholders after the first row: edit these
-      { when: "2025 – now", role: "Software engineer, freelance", where: "phatlines", what: "Websites, web apps, iOS and Mac apps for founders, studios and small businesses" },
+      { when: "2024 – now", role: "Software engineer, freelance", where: "phatlines", what: "Websites, web apps, iOS and Mac apps for founders, studios and small businesses" },
     ],
     stackHeading: "Stack",
     stackNote: "used in shipped projects",
-    github: "Public repos and the code behind these projects.",
+    github: "Click here to check some public repos of some of our projects.",
     githubCta: "Open GitHub",
   },
 
@@ -121,9 +121,11 @@ export const site = {
 
   contact: {
     heading: "Contact",
-    big: "Start a project",
+    big: "Let's build",
+    next: "your next", // + one of the words below, typed in turn in a box
+    nextWords: ["project", "website", "iOS app", "Web app", "motion graphics"],
     mailSubject: "New project",
-    line: "Tell me what you're making. I reply within two working days.",
+    line: "Tell me what you're making. we will reply within two working days.",
     emailLabel: "Email",
     copy: "Copy email",
     copied: "Copied",
@@ -167,5 +169,13 @@ export const site = {
       title: "phatlines — build failed", file: "router.tsx", files: ["hero.tsx", "work.tsx", "router.tsx", "resume.tsx", "contact.tsx"],
       problems: "Problems", output: "Output", terminal: "Terminal", failed: "Failed to compile.",
     },
+  },
+
+  // The Journal page (journal.html): not open yet.
+  journal: {
+    title: "Journal · phatlines",
+    heading: "Coming soon",
+    body: "This is where I will put my blogs and resources. Kindly check back later.",
+    back: "Back to the start",
   },
 };

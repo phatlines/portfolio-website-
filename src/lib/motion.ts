@@ -20,7 +20,6 @@ export const motion = {
   roleHold: 1600,
   // controls
   scramble: 0.4, // a primary button's label resolving
-  journalHold: 1.6, // "Coming soon" stays this long
   menu: 0.7,
   folderCover: 0.35,
   folderPop: 0.45,

@@ -3,9 +3,8 @@ import { site } from "../content/site";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { Button } from "../components/Button";
-import { Journal } from "../components/Journal";
 import { MobileMenu } from "../components/MobileMenu";
-import { SECTIONS, sectionLabel } from "../lib/sections";
+import { SECTIONS, sectionLabel, JOURNAL, onJournal } from "../lib/sections";
 
 
 /** Which section is in the middle of the screen, so its link carries the green underline. */
@@ -32,13 +31,14 @@ export function TopBar({ home = false }: { home?: boolean }) {
     addEventListener("scroll", on, { passive: true });
     return () => removeEventListener("scroll", on);
   }, [home]);
-  const here = useHere(home);
+  const seen = useHere(home);
+  const here = onJournal() ? "journal" : seen;
   return (
     <header className={`nav${past ? " past" : ""}`}>
       <a className="nav-mark" href={home ? "/" : "#top"}>{site.name}</a>
       <nav className="nav-links" aria-label={site.nav.main}>
         {SECTIONS.slice(0, 3).map((id) => <a key={id} className="nav-link" href={`${to}#${id}`} aria-current={here === id ? "true" : undefined}>{sectionLabel[id]}</a>)}
-        <Journal className="nav-link" />
+        <a className="nav-link" href={JOURNAL} aria-current={here === "journal" ? "page" : undefined}>{site.nav.journal}</a>
         <a className="nav-link" href={`${to}#contact`} aria-current={here === "contact" ? "true" : undefined}>{site.nav.contact}</a>
       </nav>
       <div className="nav-end">

@@ -3,6 +3,7 @@ import { site } from "../content/site";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { Button } from "../components/Button";
+import { Typer } from "../components/Typer";
 import { CopyIcon, GitHubMark, XMark } from "../components/Icons";
 
 /** The ask: the big line opens the commit card, and every channel from the hero is repeated so nobody scrolls back up. */
@@ -16,9 +17,11 @@ export function Contact() {
   const s = site.social;
   return (
     <section className="contact section" id="contact" aria-labelledby="contact-h">
-      <h2 className="sr-only" id="contact-h">{site.contact.heading}</h2>
-      <a className="contact-big" href={mailto} onClick={startProject}>
-        {site.contact.big.split(" ").map((w, i) => <span key={i} className="cw" style={{ "--i": i } as React.CSSProperties}>{w}</span>)}
+      <a className="contact-big" href={mailto} onClick={startProject} aria-label={`${site.contact.big} ${site.contact.next} ${site.contact.nextWords[0]}: ${site.nav.cta}`}>
+        <h2 className="cb-head" id="contact-h" aria-hidden="true">
+          {site.contact.big.replace("'", "").split(" ").map((w, i) => <span key={i} className="cw" style={{ "--i": i } as React.CSSProperties}>{w}</span>)}
+        </h2>
+        <span className="cb-next" aria-hidden="true">{site.contact.next} <Typer words={site.contact.nextWords} /></span>
       </a>
       <p className="contact-line">{site.contact.line}</p>
       <ul className="rows">

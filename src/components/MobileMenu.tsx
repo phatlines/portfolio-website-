@@ -6,9 +6,8 @@ import { motion, reduceMotion } from "../lib/motion";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { getLenis } from "../hooks/useSmoothScroll";
-import { SECTIONS, sectionLabel } from "../lib/sections";
+import { SECTIONS, sectionLabel, JOURNAL } from "../lib/sections";
 import { Button } from "./Button";
-import { Journal } from "./Journal";
 import { GitHubMark, XMark } from "./Icons";
 
 gsap.registerPlugin(MorphSVGPlugin);
@@ -95,10 +94,9 @@ export function MobileMenu({ here, to }: { here: string; to: string }) {
       <div ref={panel} id="mm-panel" className="mm" aria-hidden={!open} inert={open ? undefined : true}>
         <svg className="mm-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path className="mm-edge" d={EDGE.down} /></svg>
         <nav className="mm-nav" aria-label={site.nav.main}>
-          {[...SECTIONS.slice(0, 3), "journal", "contact"].map((id) => id === "journal"
-            ? <div className="mm-item" key={id}><Journal className="mm-link" /></div>
-            : <a className="mm-item mm-link" key={id} data-id={id} href={`${to}#${id}`} onClick={go(id)} aria-current={here === id ? "true" : undefined}>
-                {sectionLabel[id as keyof typeof sectionLabel]}
+          {[...SECTIONS.slice(0, 3), "journal", "contact"].map((id) =>
+            <a className="mm-item mm-link" key={id} data-id={id} href={id === "journal" ? JOURNAL : `${to}#${id}`} onClick={id === "journal" ? undefined : go(id)} aria-current={here === id ? (id === "journal" ? "page" : "true") : undefined}>
+                {id === "journal" ? site.nav.journal : sectionLabel[id as keyof typeof sectionLabel]}
                 <svg className="mm-squiggle" viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C14 1 22 11 34 6 S56 1 66 6 S88 11 98 5 S112 3 118 6" /></svg>
               </a>)}
         </nav>

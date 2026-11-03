@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { site } from "../content/site";
@@ -7,37 +7,10 @@ import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { SECTIONS, sectionLabel } from "../lib/sections";
 import { Button } from "../components/Button";
+import { Typer } from "../components/Typer";
 import { GitHubMark, XMark } from "../components/Icons";
 
 gsap.registerPlugin(SplitText);
-
-const roles = site.hero.roles;
-const longest = roles.reduce((a, b) => (b.length > a.length ? b : a));
-
-/** The job title types itself in a box, deletes, and types the next one. Screen readers get the plain list. */
-function RoleTyper() {
-  const [text, setText] = useState(roles[0]);
-  useEffect(() => {
-    let i = 0, n = roles[0].length, del = false, t: ReturnType<typeof setTimeout>;
-    const step = () => {
-      const word = roles[i];
-      if (!del && n === word.length) { del = true; t = setTimeout(step, motion.roleHold); return; }
-      if (del && n === 0) { del = false; i = (i + 1) % roles.length; }
-      n += del ? -1 : 1;
-      setText(roles[i].slice(0, n));
-      t = setTimeout(step, del ? motion.roleErase : motion.roleType);
-    };
-    t = setTimeout(step, motion.roleHold);
-    return () => clearTimeout(t);
-  }, []);
-  return (
-    <span className="role">
-      <span className="sr-only">{roles.join(", ")}</span>
-      <span className="role-size" aria-hidden="true">{longest}</span>
-      <span className="role-text" aria-hidden="true">{text}<i className="role-caret" /></span>
-    </span>
-  );
-}
 
 /**
  * The first screen as an editor window on the ink ground: the file tree links to the sections and hero.tsx holds who, what and the actions.
@@ -83,7 +56,7 @@ export function Hero({ ready }: { ready: boolean }) {
             <div className="ide-editor">
               <span className="ide-gutter" aria-hidden="true">{Array.from({ length: 40 }, (_, i) => <span key={i}>{i + 1}</span>)}</span>
               <div className="hero-text">
-                <p className="hero-facts hero-in"><span className="ide-cmt" aria-hidden="true">//</span>{site.person}<i>·</i><RoleTyper /><span className="hero-place"><i>·</i> {site.based}</span></p>
+                <p className="hero-facts hero-in"><span className="ide-cmt" aria-hidden="true">//</span>{site.person}<i>·</i><Typer words={site.hero.roles} /><span className="hero-place"><i>·</i> {site.based}</span></p>
                 <h1 className="hero-h1" id="hero-h">{site.hero.heading}</h1>
                 <p className="hero-lead hero-in">{site.hero.lead}</p>
                 <div className="hero-actions hero-in">

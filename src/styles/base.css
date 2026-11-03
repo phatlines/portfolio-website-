@@ -22,6 +22,16 @@
   --rule: #d5d9d5;
   --rule-ink: rgb(255 255 255 / .16);
 
+  /* ===== SECTION COLOURS: change a section's background and text colour here, one pair per section =====
+     transparent = the page itself (white with the dot grid). A colour here is full width and covers the dots.
+     The hero and the 404 are always the ink ground (--night above). */
+  --bg-work: transparent;          --fg-work: var(--ink);
+  --bg-process: transparent;       --fg-process: var(--ink);
+  --bg-resume: transparent;        --fg-resume: var(--ink);
+  --bg-availability: transparent;  --fg-availability: var(--ink);
+  --bg-contact: transparent;       --fg-contact: var(--ink);
+  --bg-footer: transparent;        --fg-footer: var(--ink);
+
   --t-hero: clamp(3rem, 7vw, 6.5rem);
   --t-section: clamp(2.25rem, 4vw, 3.5rem);
   --t-project: clamp(2rem, 3.4vw, 3rem);

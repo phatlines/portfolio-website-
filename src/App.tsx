@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { site } from "./content/site";
 import { reduceMotion } from "./lib/motion";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { useHashRoute } from "./hooks/useHashRoute";
+import { useDotLight } from "./hooks/useDotLight";
 import { ProjectOverlay } from "./components/ProjectOverlay";
 import { ContactCard } from "./components/ContactCard";
 import { BuildLoader } from "./components/BuildLoader";
@@ -26,26 +27,6 @@ const SEEN = "phatlines-build-seen";
 const seen = () => { try { return sessionStorage.getItem(SEEN) === "1"; } catch { return false; } };
 // The build plays once per session, and never over a shared project link or with ?nointro.
 const playBuild = !reduceMotion() && !seen() && !new URLSearchParams(location.search).has("nointro") && !location.hash.startsWith("#work/");
-
-/** The page's dot grid: the dots round the pointer light up green, trailing it a little. The ink hero sits on top and hides it. */
-function useDotLight() {
-  useEffect(() => {
-    if (matchMedia("(hover: none)").matches) return;
-    const dots = document.querySelector<HTMLElement>(".dots")!.style;
-    let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, raf = 0;
-    const move = (e: PointerEvent) => { x = e.clientX; y = e.clientY; };
-    const loop = () => {
-      if (Math.abs(x - cx) + Math.abs(y - cy) > 0.5) { // still: no write, so no restyle or repaint
-        cx += (x - cx) * 0.16; cy += (y - cy) * 0.16;
-        dots.setProperty("--mx", `${cx}px`); dots.setProperty("--my", `${cy}px`);
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    addEventListener("pointermove", move, { passive: true });
-    raf = requestAnimationFrame(loop);
-    return () => { removeEventListener("pointermove", move); cancelAnimationFrame(raf); };
-  }, []);
-}
 
 export function App() {
   useSmoothScroll();
