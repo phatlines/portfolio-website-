@@ -21,7 +21,7 @@ export type Project = {
   status: "live" | "in-progress" | "hidden"; // only "live" is shown on the site
   order: number; // lower shows first
   group: "main" | "exploration"; // "exploration" = Side explorations, always below the main list
-  featured?: boolean; // gets a full-colour scene
+  featured?: boolean; // shown large in its device frame (one per platform)
   tags?: string[]; // extra words the hero search matches, besides name, type and stack
   tag?: string; // "In development", "Coming soon"
   liveUrl?: string;
@@ -30,4 +30,15 @@ export type Project = {
   ink: string; // text colour on `color`
   folder?: { color: string; ink: string }; // the hero folder, when `color` would vanish on the page or sit too close to a neighbour
   media: Media;
+  screen?: Screen; // featured projects: the live screen shown in its device frame on the home page
+};
+
+/** A product screen in its device: a browser window, a phone or a Mac window. "tall" is a full-page capture that scrolls inside the frame. */
+export type Screen = {
+  frame: "browser" | "phone" | "mac";
+  kind: "image" | "video" | "tall";
+  src: string;
+  poster?: string;
+  url?: string; // the address bar (browser) or window title (Mac)
+  crop?: [x: number, y: number, w: number, h: number, imgW: number, imgH: number]; // phone: the phone's box inside a wider poster
 };

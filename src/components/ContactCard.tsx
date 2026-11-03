@@ -1,26 +1,30 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { site } from "../content/site";
-import { gmail, OPEN_CONTACT } from "../lib/contact";
-import { mailto } from "../lib/mailto";
-import { motion } from "../lib/motion";
+import { commitMessage, composeGmail, OPEN_CONTACT } from "../lib/contact";
+import { composeMailto } from "../lib/mailto";
+import { motion, reduceMotion } from "../lib/motion";
 import { getLenis } from "../hooks/useSmoothScroll";
 import { Button } from "./Button";
+import { CopyIcon } from "./Icons";
 
-const card = site.contact.card;
+const c = site.contact.card;
 
 /**
- * "Start a project": your address, with ways to reach you that work for everyone. Copy needs nothing installed,
- * Gmail opens a compose window in the browser, and the email app link is there for people who have one.
- * Opened by openContact() from any Start a project button. Esc, the Close button or a click outside closes it.
+ * "Start a project" as a new commit. Pick a type and a timeline, write one line, and the preview shows it as a commit;
+ * Commit and send opens your email app (or Gmail) with it written in. Every field is optional, and copying the address still works.
+ * Grows out of the button that opened it; Esc, the Close button or a click outside closes it, and focus goes back to that button.
  */
 export function ContactCard() {
   const [open, setOpen] = useState(false);
+  const [scope, setScope] = useState<string | null>(null);
+  const [timeline, setTimeline] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
   const [copy, setCopy] = useState<"idle" | "done" | "failed">("idle");
-  const back = useRef<HTMLDivElement>(null), opener = useRef<Element | null>(null), leaving = useRef(false);
+  const back = useRef<HTMLDivElement>(null), from = useRef<DOMRect | undefined>(undefined), opener = useRef<Element | null>(null), leaving = useRef(false);
 
   useEffect(() => {
-    const on = () => { opener.current = document.activeElement; leaving.current = false; setCopy("idle"); setOpen(true); };
+    const on = (e: Event) => { opener.current = document.activeElement; from.current = (e as CustomEvent<DOMRect | undefined>).detail; leaving.current = false; setCopy("idle"); setOpen(true); };
     addEventListener(OPEN_CONTACT, on);
     return () => removeEventListener(OPEN_CONTACT, on);
   }, []);
@@ -35,17 +39,24 @@ export function ContactCard() {
 
   useLayoutEffect(() => {
     if (!open) return;
-    const el = back.current!;
+    const el = back.current!, card = el.querySelector<HTMLElement>(".cc-card")!;
     gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 });
-    gsap.fromTo(el.querySelector(".cc-card"), { y: 28, scale: 0.97, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: motion.cardIn, ease: motion.easeOut });
-    el.querySelector<HTMLElement>(".cc-first")?.focus({ preventScroll: true });
+    const r = from.current, end = card.getBoundingClientRect();
+    if (r && !reduceMotion() && innerWidth > 600) {
+      // Grow from the button: start at its box and open out to the card.
+      gsap.fromTo(card, { x: r.left + r.width / 2 - (end.left + end.width / 2), y: r.top + r.height / 2 - (end.top + end.height / 2), scale: Math.max(0.2, r.width / end.width), autoAlpha: 0 },
+        { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: motion.cardIn, ease: motion.easeOut });
+    } else {
+      gsap.fromTo(card, { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: motion.cardIn, ease: motion.easeOut });
+    }
+    card.querySelector<HTMLElement>(".cc-first")?.focus({ preventScroll: true });
     document.documentElement.classList.add("card-open");
     getLenis()?.stop();
     // Capture phase: Esc and Tab belong to the card, even when a project page is open underneath.
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); return; }
       if (e.key !== "Tab") return;
-      const f = [...el.querySelectorAll<HTMLElement>("a[href], button:not([disabled])")];
+      const f = [...el.querySelectorAll<HTMLElement>("a[href], button:not([disabled]), input")];
       const first = f[0], last = f[f.length - 1];
       e.stopPropagation();
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -68,18 +79,47 @@ export function ContactCard() {
   };
 
   if (!open) return null;
+  const { subject, body } = commitMessage(scope, timeline, message);
   return (
     <div className="cc" ref={back} onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
       <div className="cc-card" role="dialog" aria-modal="true" aria-labelledby="cc-h">
-        <button type="button" className="cc-x" onClick={close}>{site.overlay.close}</button>
-        <h2 id="cc-h">{site.nav.cta}</h2>
+        <div className="cc-top">
+          <h2 id="cc-h">{c.title}</h2>
+          <button type="button" className="cc-x" onClick={close}>{site.overlay.close}</button>
+        </div>
         <p className="cc-line">{site.contact.line}</p>
-        <p className="cc-email">{site.email}</p>
+
+        <fieldset className="cc-field">
+          <legend>{c.typeLabel}</legend>
+          <div className="chips">{c.types.map((t, i) => (
+            <button key={t.scope} type="button" className={`chip${i === 0 ? " cc-first" : ""}`} aria-pressed={scope === t.scope} onClick={() => setScope(scope === t.scope ? null : t.scope)}>{t.label}</button>
+          ))}</div>
+        </fieldset>
+        <fieldset className="cc-field">
+          <legend>{c.timelineLabel}</legend>
+          <div className="chips">{c.timelines.map((t) => (
+            <button key={t} type="button" className="chip" aria-pressed={timeline === t} onClick={() => setTimeline(timeline === t ? null : t)}>{t}</button>
+          ))}</div>
+        </fieldset>
+        <label className="cc-field cc-msg">
+          <span>{c.messageLabel}</span>
+          <input type="text" value={message} maxLength={90} placeholder={c.messagePlaceholder} onChange={(e) => setMessage(e.target.value)} />
+        </label>
+
+        <pre className="cc-preview" aria-label={body}><code>
+          <span className="cc-hash">{"> "}git commit -m</span>{"\n"}
+          <span className="cc-subject">{subject}</span>{"\n"}
+          {timeline && <><span className="cc-add">+ timeline: {timeline.toLowerCase()}</span>{"\n"}</>}
+          <span className="cc-add">+ from: {c.from}</span>
+        </code></pre>
+
         <div className="cc-actions">
-          <button type="button" className="btn btn-ink cc-first" onClick={onCopy}>{copy === "done" ? site.contact.copied : site.contact.copy}</button>
-          <Button variant="outline" href={mailto}>{card.openApp}</Button>
-          <Button variant="outline" href={gmail} target="_blank" rel="noreferrer">{card.gmail}</Button>
-          <Button variant="outline" href={site.social.url} target="_blank" rel="noreferrer">{card.x}</Button>
+          <Button href={composeMailto(subject, body)}>{c.send}</Button>
+          <Button variant="secondary" href={composeGmail(subject, body)} target="_blank" rel="noreferrer">{c.gmail}</Button>
+        </div>
+        <div className="cc-email">
+          <span className="mono">{site.email}</span>
+          <button type="button" className="cc-copy" onClick={onCopy}><CopyIcon />{copy === "done" ? site.contact.copied : site.contact.copy}</button>
         </div>
         <p className="cc-status" role="status">{copy === "failed" ? site.contact.copyFailed : copy === "done" ? site.contact.copied : ""}</p>
       </div>

@@ -1,14 +1,11 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
 import { site } from "../content/site";
-import { motion } from "../lib/motion";
+import { motion, reduceMotion } from "../lib/motion";
+import { scramble } from "../lib/scramble";
 import { TopBar } from "../sections/TopBar";
-import { Backdrop } from "../components/Backdrop";
 import { ContactCard } from "../components/ContactCard";
-import { Button } from "../components/Button";
 
-gsap.registerPlugin(SplitText);
 const copy = site.notFound;
 
 /** The address they asked for, read in their own browser and never sent anywhere. Null when there is nothing worth showing. */
@@ -20,49 +17,48 @@ const askedFor = () => {
   } catch { return null; }
 };
 
-/**
- * The 404, after upclose.studio's: a huge faded "404" cropped by the screen, a small label, one plain line.
- * The pun is the logo's slash, which is also the slash in a web address. Beyond theirs it shows the address that was asked for,
- * and the site's contour lines run behind it.
- */
+const suggestions = [
+  { href: "/", label: copy.home },
+  { href: "/#work", label: site.nav.work },
+  { href: "/#resume", label: site.nav.resume },
+  { href: "/#contact", label: site.nav.contact },
+];
+
+/** The 404 as a compiler error: the route that failed, a short stack trace, and "did you mean" links to real sections. */
 export function NotFound() {
   const root = useRef<HTMLDivElement>(null);
   const path = askedFor();
 
   useLayoutEffect(() => {
     document.title = copy.title;
-    const el = root.current!, q = gsap.utils.selector(el);
-    const split = SplitText.create(q(".nf-h")[0], { type: "words", mask: "words", wordsClass: "hw" });
-    const rest = q(".nf-in");
-    gsap.set(split.words, { yPercent: 115 });
-    gsap.set(rest, { autoAlpha: 0, y: 16 });
-    gsap.set(q(".nf-digits"), { autoAlpha: 0, scale: motion.nfZoom });
-    const tl = gsap.timeline();
-    tl.to(q(".nf-digits"), { autoAlpha: 1, scale: 1, duration: motion.nfIn, ease: motion.easeOut }, 0)
-      .to(rest[0], { autoAlpha: 1, y: 0, duration: 0.6, ease: motion.easeSoft }, 0.25)
-      .to(split.words, { yPercent: 0, duration: 0.8, stagger: 0.07, ease: motion.easeOut }, 0.4)
-      .to(rest.slice(1), { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: motion.easeSoft }, 0.7);
-    // On desktop the digits drift a little against the pointer, for depth.
-    let off: (() => void) | undefined;
-    if (matchMedia("(pointer: fine)").matches) {
-      const x = gsap.quickTo(q(".nf-digits"), "x", { duration: 1.2, ease: "power3" }), y = gsap.quickTo(q(".nf-digits"), "y", { duration: 1.2, ease: "power3" });
-      const move = (e: PointerEvent) => { x(-(e.clientX / innerWidth - 0.5) * motion.nfDrift); y(-(e.clientY / innerHeight - 0.5) * motion.nfDrift); };
-      addEventListener("pointermove", move);
-      off = () => removeEventListener("pointermove", move);
-    }
-    return () => { tl.kill(); split.revert(); off?.(); };
+    if (reduceMotion()) return;
+    const ctx = gsap.context(() => {
+      const digits = root.current!.querySelector<HTMLElement>(".nf-404")!;
+      digits.textContent = "000";
+      scramble(digits, "404", 1.1);
+      gsap.timeline()
+        .from(".nf-trace li", { autoAlpha: 0, x: -8, stagger: 0.08, duration: 0.3 }, 0.1)
+        .from(".nf-in", { autoAlpha: 0, y: 12, stagger: 0.07, duration: 0.6, ease: motion.easeSoft }, 0.45);
+    }, root);
+    return () => ctx.revert();
   }, []);
 
   return (
     <div ref={root} className="nf">
-      <Backdrop />
       <TopBar home />
-      <div className="nf-digits-wrap" aria-hidden="true"><div className="nf-digits">404</div></div>
       <main className="nf-main">
-        <p className="nf-label nf-in">{copy.label}</p>
-        <h1 className="nf-h">{copy.heading}</h1>
-        <p className="nf-path nf-in">{path ? <>{copy.path} <b>{path}</b>.</> : copy.noPath}</p>
-        <div className="nf-in"><Button href="/">{copy.home}</Button></div>
+        <ol className="nf-trace mono" aria-hidden="true">
+          <li className="nf-err">{copy.error}</li>
+          <li>&nbsp;&nbsp;at GET {path ?? "/"}</li>
+          <li>&nbsp;&nbsp;at phatlines.router (main.tsx)</li>
+        </ol>
+        <p className="nf-404" aria-hidden="true">404</p>
+        <h1 className="nf-h nf-in">{copy.heading}</h1>
+        <p className="nf-path nf-in">{path ? <>{copy.path} <b className="mono">{path}</b></> : copy.noPath}</p>
+        <nav className="nf-in" aria-label={copy.didYouMean}>
+          <p className="nf-mean">{copy.didYouMean}</p>
+          <ul className="nf-links">{suggestions.map((s) => <li key={s.href}><a className="btn btn-link" href={s.href}>{s.label}</a></li>)}</ul>
+        </nav>
       </main>
       <ContactCard />
     </div>

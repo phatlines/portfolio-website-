@@ -1,37 +1,62 @@
-/* Stand-in faces until phatlines' headline fonts are supplied (PLAN.md 2.4). */
+/* Display: Prox Yo by FFEEARR (free licence, commercial use allowed: src/fonts/display/LICENSE.txt). Text: Hanken Grotesk. */
+@font-face { font-family: "Prox Yo"; src: url(../fonts/display/ProxYo-Regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Prox Yo"; src: url(../fonts/display/ProxYo-Italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Hanken Grotesk"; src: url(/fonts/hanken.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: "Anybody"; src: url(/fonts/anybody.woff2) format("woff2"); font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; }
-@font-face { font-family: "Gloock"; src: url(/fonts/gloock.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 
+/* ---------- Tokens (docs/v1.1/SPEC.md) ---------- */
 :root {
-  --card: #fffdf8; /* card and tile surfaces */
-  --shadow-s: 0 24px 44px -28px rgb(11 11 11 / .45); /* tiles, prompt bar, results */
-  --shadow-l: 0 40px 80px -40px rgb(11 11 11 / .6); /* scene media, contact card */
+  --head: "Prox Yo", "Hanken Grotesk", system-ui, sans-serif;
   --body: "Hanken Grotesk", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
-  --pad: clamp(16px, 3.2vw, 48px);
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --page: #ffffff;
+  --ink: #111412;
+  --ink-2: #4b524d;
+  --ink-soft: #a7b0aa; /* secondary text on ink */
+  --night: #000; /* the hero, loader and menu: the portrait's own black, so the photo has no edge */
+  --green: #0f6b45;
+  --green-hi: #1a8a5c;
+  --green-2: #e3f1ea;
+  --green-on-ink: #6fd3a3;
+  --stage: #eef0ed;
+  --rule: #d5d9d5;
+  --rule-ink: rgb(255 255 255 / .16);
+
+  --t-hero: clamp(3rem, 7vw, 6.5rem);
+  --t-section: clamp(2.25rem, 4vw, 3.5rem);
+  --t-project: clamp(2rem, 3.4vw, 3rem);
+  --t-lead: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --t-body: 1.0625rem;
+  --t-meta: .9375rem; /* the floor */
+
+  --pad: 16px;
+  --section-y: 40px;
+  --max: 1360px;
   --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --shadow-s: 0 4px 10px -4px rgb(17 20 18 / .15), 0 24px 44px -24px rgb(17 20 18 / .35);
+  --shadow-l: 0 6px 14px -6px rgb(17 20 18 / .2), 0 40px 80px -36px rgb(17 20 18 / .5);
+  color-scheme: light;
 }
+@media (min-width: 768px) { :root { --pad: 24px; --section-y: 48px; } }
+@media (min-width: 1280px) { :root { --pad: 32px; --section-y: 64px; } }
+@media (min-width: 1440px) { :root { --pad: 40px; } }
+
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; font: 400 1.0625rem/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+html { -webkit-text-size-adjust: 100%; scrollbar-color: color-mix(in srgb, var(--ink) 35%, transparent) var(--page); caret-color: var(--green); }
+body { margin: 0; background: var(--page); color: var(--ink); font: 400 var(--t-body)/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
 a { color: inherit; }
-img, video, canvas { display: block; max-width: 100%; }
+img, video, canvas, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--green); color: #fff; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
-
-/* Film grain: a tiny noise tile shifted every frame; costs nothing and kills the flat look. */
-.grain { position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .09; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.4 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"); animation: grain 1s steps(6) infinite; mix-blend-mode: overlay; }
-@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-6%, 4%); } 40% { transform: translate(5%, -7%); } 60% { transform: translate(-3%, 8%); } 80% { transform: translate(7%, 2%); } 100% { transform: translate(0, 0); } }
-
-/* Cursor that says what a click does. Mouse only. */
-.cursor { opacity: 0; position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; mix-blend-mode: difference; transition: width 260ms var(--ease-out), height 260ms var(--ease-out), margin 260ms var(--ease-out); display: grid; place-items: center; }
-.cursor.live { opacity: 1; }
-.cursor span { font: 700 .75rem/1 var(--body); color: #000; opacity: 0; transition: opacity 160ms; white-space: nowrap; }
-.cursor.has-label { width: 76px; height: 76px; margin: -38px 0 0 -38px; }
-.cursor.has-label span { opacity: 1; }
-@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
-
-.skip { position: absolute; left: 12px; top: -60px; z-index: 200; padding: 10px 14px; background: #fff; color: #000; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mono { font-family: var(--mono); font-size: var(--t-meta); }
+.muted { color: var(--ink-2); }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 400; padding: 10px 14px; background: #fff; color: #000; }
 .skip:focus { top: 12px; }
-:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
-
+.overlay-open, .card-open, .menu-open { overflow: hidden; }

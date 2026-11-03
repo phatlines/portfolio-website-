@@ -42,14 +42,18 @@ describe("project list", () => {
     expect(visibleProjects(list).map((p) => p.slug)).toEqual(["a", "e", "c"]);
   });
 
-  it("features three projects as scenes, in order", () => {
-    expect(visibleProjects().filter((p) => p.featured).map((p) => p.slug)).toEqual(["spori", "ayomide", "african-skin-code"]);
+  it("features one project per platform, each with its screen on disk", () => {
+    const f = visibleProjects().filter((p) => p.featured);
+    expect(f.map((p) => p.slug)).toEqual(["spori", "invoicely", "fitty", "kapture"]);
+    for (const p of f) {
+      expect(p.screen, `${p.slug}: a featured project needs a screen`).toBeDefined();
+      for (const src of [p.screen!.src, p.screen!.poster].filter(Boolean) as string[]) expect(existsSync(pub(src)), `${p.slug}: ${src} is missing`).toBe(true);
+    }
   });
 
-  it("starts the hero search list with visible projects", () => {
+  it("wires every process job to visible projects", () => {
     const visible = visibleProjects().map((p) => p.slug);
-    expect(site.hero.suggest.length).toBe(3);
-    for (const slug of site.hero.suggest) expect(visible).toContain(slug);
+    for (const j of site.process.jobs) for (const slug of j.examples) expect(visible, `${j.name} → ${slug}`).toContain(slug);
   });
 
   it("gives every live link an https address", () => {

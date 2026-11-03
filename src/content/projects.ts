@@ -23,6 +23,7 @@ export const projects: Project[] = [
     liveUrl: "https://spori-studeos.vercel.app",
     color: "#d9621f",
     ink: "#160903",
+    screen: { frame: "browser", kind: "tall", src: "/media/spori-tall.jpg", url: "spori-studeos.vercel.app" },
     media: { kind: "image", src: "/media/spori-tall.jpg", poster: "/media/spori.jpg", alt: "The SPORI website, scrolling from the hero through the portfolio" },
   },
   {
@@ -41,7 +42,6 @@ export const projects: Project[] = [
     status: "live",
     order: 2,
     group: "main",
-    featured: true,
     linkSoon: true,
     color: "#ece7dc",
     ink: "#121110",
@@ -66,7 +66,6 @@ export const projects: Project[] = [
     status: "live",
     order: 3,
     group: "main",
-    featured: true,
     liveUrl: "https://theafricanskincode.netlify.app",
     color: "#b05a22", // the site's own button brown
     ink: "#fffdf8",
@@ -90,8 +89,10 @@ export const projects: Project[] = [
     status: "live",
     order: 4,
     group: "main",
+    featured: true,
     color: "#cbff4d",
     ink: "#0b0f0e",
+    screen: { frame: "browser", kind: "video", src: "/media/invoicely-app.mp4", poster: "/media/invoicely-app.jpg", url: "invoicely" },
     media: { kind: "video", src: "/media/invoicely-hd.mp4", poster: "/media/invoicely.jpg", alt: "invoicely launch film (silent loop)" },
   },
   {
@@ -110,9 +111,11 @@ export const projects: Project[] = [
     status: "live",
     order: 5,
     group: "main",
+    featured: true,
     tag: "Still in development",
     color: "#6e2618",
     ink: "#f8ebe2",
+    screen: { frame: "phone", kind: "image", src: "/media/fitty.jpg", crop: [578, 20, 228, 498, 960, 540] },
     media: { kind: "video", src: "/media/fitty-hd.mp4", poster: "/media/fitty.jpg", alt: "Fitty launch film (silent loop, demo data)" },
   },
   {
@@ -132,10 +135,12 @@ export const projects: Project[] = [
     status: "live",
     order: 6,
     group: "main",
+    featured: true,
     tag: "Launching soon",
     color: "#4d4169", // dusk violet, sampled from the top of the kapture screenshot's sky
     ink: "#f3efe6",
     // shortcut: a still until phatlines supplies a screen recording (PENDING.md).
+    screen: { frame: "mac", kind: "image", src: "/media/kapture.jpg", url: "Kapture" },
     media: { kind: "image", src: "/media/kapture.jpg", poster: "/media/kapture.jpg", alt: "kapture's AI sessions panel open on a Mac desktop, showing three Claude Code sessions" },
   },
   {

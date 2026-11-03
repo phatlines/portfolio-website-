@@ -1,13 +1,14 @@
-/* ---------- 404: a huge faded 404, a label, one line (after upclose.studio's) ---------- */
-.nf { --hl: rgb(11 11 11 / .14); position: relative; min-height: 100svh; overflow: hidden; }
-/* The number is the page: tone on tone, far bigger than the screen, so only the middle shows. */
-.nf-digits-wrap { position: fixed; inset: 0; z-index: 0; display: grid; place-items: center; overflow: hidden; pointer-events: none; }
-.nf-digits { font: 400 max(118vh, 62vw)/.8 var(--head); letter-spacing: -.02em; white-space: nowrap; padding-top: .14em; color: color-mix(in srgb, var(--black) 7%, var(--paper)); will-change: transform; }
-.nf-main { position: relative; z-index: 2; display: grid; justify-items: start; align-content: center; gap: 14px; min-height: 100svh; padding: 120px var(--pad) 96px; }
-.nf-label { display: flex; align-items: center; gap: 12px; margin: 0; font: 700 var(--t-meta)/1 var(--body); letter-spacing: .08em; }
-/* The logo's slash, as a small mark. */
-.nf-label::before { content: ""; width: 9px; height: 18px; background: var(--pc); transform: skewX(-18deg); }
-.nf-h { margin: 0; font: 400 clamp(2rem, 5.4vw, 4.25rem)/1 var(--head); letter-spacing: -.01em; text-wrap: balance; max-width: 14ch; }
-.nf-path { margin: 0 0 14px; max-width: 40ch; font-size: 1.125rem; color: rgb(11 11 11 / .72); overflow-wrap: anywhere; }
-.nf-path b { color: var(--black); font-weight: 700; }
-@media (max-width: 760px) { .nf-main { padding-top: 104px; } }
+/* ---------- 404: a compiler error ---------- */
+.nf { min-height: 100svh; background: var(--ink); color: #fff; }
+.nf .nav { color: #fff; background: none; box-shadow: none; }
+.nf .nav-cta { display: none; }
+.nf-main { max-width: calc(var(--max) + var(--pad) * 2); margin: 0 auto; min-height: 100svh; display: grid; align-content: center; justify-items: start; gap: 14px; padding: 104px var(--pad) 64px; }
+.nf-trace { margin: 0; padding: 0; list-style: none; line-height: 1.8; color: var(--ink-soft); }
+.nf-err { color: #ff8f7a; font-weight: 600; }
+.nf-404 { font: 400 clamp(7rem, 26vw, 22rem)/.8 var(--head); color: #fff; margin: 8px 0 6px; font-variant-numeric: tabular-nums; }
+.nf-h { font: 700 clamp(1.75rem, 4vw, 3rem)/1.1 var(--body); max-width: 18ch; }
+.nf-path { color: var(--ink-soft); font-size: 1.125rem; overflow-wrap: anywhere; }
+.nf-path b { color: #fff; }
+.nf-mean { margin-top: 10px; font: 600 var(--t-meta) var(--mono); color: var(--green-on-ink); }
+.nf-links { display: flex; flex-wrap: wrap; gap: 0 26px; margin: 4px 0 0; padding: 0; list-style: none; }
+.nf :focus-visible { outline-color: var(--green-on-ink); }

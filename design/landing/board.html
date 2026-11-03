@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Landing redesign board</title>
+<style>
+@font-face { font-family: "Anybody"; src: url("../../public/fonts/anybody.woff2") format("woff2"); font-weight: 100 900; font-stretch: 50% 150%; }
+@font-face { font-family: "Hanken Grotesk"; src: url("../../public/fonts/hanken.woff2") format("woff2"); font-weight: 100 900; }
+
+:root {
+  --disp: "Anybody", sans-serif;
+  --body: "Hanken Grotesk", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --sheet: #ffffff; --stage: #eef0ed; --ink: #111412; --ink-2: #4b524d; --green: #0f6b45; --green-2: #e3f1ea;
+  --rule: #d5d9d5; --board: #c7cbc7; --fold: #0a62ff;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { width: 2560px; background: var(--board); color: var(--ink); font: 400 17px/1.5 var(--body); -webkit-font-smoothing: antialiased; padding: 72px 64px 96px; }
+h1, h2, h3, h4, p { margin: 0; }
+.D { font-family: var(--disp); font-stretch: 88%; font-weight: 750; letter-spacing: -.02em; line-height: .95; }
+.prop { display: inline-block; vertical-align: middle; font: 700 12px/1 var(--body); padding: 4px 7px; border-radius: 4px; background: #ffd84a; color: #2b2300; letter-spacing: 0; margin-left: 6px; font-stretch: 100%; }
+.ph { background: #c9e4ff; color: #0c2a4a; }
+.ar { width: .75em; height: .75em; margin-left: 6px; flex: none; }
+
+/* board chrome */
+.head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: end; padding-bottom: 40px; border-bottom: 3px solid var(--ink); }
+.head h1 { font-size: 140px; }
+.head .sub { font-size: 22px; max-width: 1000px; margin-top: 20px; }
+.was { margin-top: 20px; padding: 16px 20px; background: var(--sheet); font-size: 16px; line-height: 1.45; max-width: 1000px; display: grid; gap: 8px; }
+.was b { font-family: var(--mono); font-size: 14px; }
+.legend { display: grid; gap: 10px; font-size: 16px; }
+.legend div { display: flex; gap: 12px; align-items: center; }
+.legend i { width: 28px; height: 3px; display: inline-block; }
+.order { display: grid; grid-template-columns: 340px 1fr; gap: 48px; padding: 48px 0; border-bottom: 3px solid var(--ink); }
+.order h2 { font-size: 64px; }
+.order ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; }
+.order li { background: var(--sheet); padding: 18px; display: grid; gap: 8px; align-content: start; border-top: 3px solid var(--green); }
+.order li b { font: 750 30px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.order li span { font: 600 14px var(--mono); color: var(--green); }
+.order li p { font-size: 15px; line-height: 1.4; }
+.row { display: grid; grid-template-columns: 420px 1440px 375px; gap: 40px; padding-top: 64px; align-items: start; }
+.annot { display: grid; gap: 18px; }
+.annot .n { font: 700 15px var(--mono); }
+.annot h2 { font-size: 64px; }
+.annot .why { font-size: 20px; line-height: 1.4; padding: 14px 16px; background: var(--sheet); border-top: 3px solid var(--green); }
+.annot .notes { font-size: 15px; line-height: 1.45; display: grid; gap: 8px; }
+.annot .notes b { font-family: var(--mono); font-size: 14px; }
+.flabel { font: 700 14px var(--mono); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.frame { position: relative; overflow: hidden; background: var(--sheet); color: var(--ink); box-shadow: 0 24px 48px -28px rgb(0 0 0 / .45); }
+.frame.desk { width: 1440px; }
+.frame.mob { width: 375px; border-radius: 28px; }
+.fold { position: absolute; left: 0; right: 0; height: 0; border-top: 3px dashed var(--fold); z-index: 30; }
+.fold span { position: absolute; right: 12px; top: -30px; background: var(--fold); color: #fff; font: 700 13px var(--mono); padding: 5px 8px; border-radius: 4px; }
+
+/* page parts */
+.d { padding: 64px 40px; }
+.m { padding: 40px 16px; }
+.h2 { font: 750 56px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.secline { display: flex; align-items: baseline; gap: 20px; border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 32px; }
+.secline .rt { margin-left: auto; font: 600 15px var(--body); color: var(--ink-2); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 20px; border-radius: 8px; font: 700 16px var(--body); white-space: nowrap; border: 1.5px solid var(--ink); color: var(--ink); }
+.btn.go { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.ink { background: var(--ink); color: #fff; }
+.btn small { font: 500 14px var(--body); color: var(--ink-2); margin-left: 4px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--green-2); display: inline-block; flex: none; }
+.tag { font: 600 14px var(--body); padding: 3px 10px; border: 1px solid var(--rule); border-radius: 999px; white-space: nowrap; display: inline-block; }
+.muted { color: var(--ink-2); }
+.mono { font-family: var(--mono); font-size: 15px; }
+table.ds { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.4; }
+table.ds th { text-align: left; font: 600 14px var(--body); color: var(--ink-2); padding: 8px 12px 8px 0; border-bottom: 1.5px solid var(--ink); }
+table.ds td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.gridplate { background-color: var(--stage); background-image: linear-gradient(rgb(17 20 18 / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(17 20 18 / .05) 1px, transparent 1px); background-size: 8px 8px; }
+
+/* devices */
+.browser { position: absolute; background: #fff; border: 1px solid #c9cdc9; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 60px -24px rgb(17 20 18 / .35), 0 4px 10px -4px rgb(17 20 18 / .15); }
+.browser .bar { height: 30px; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #f6f7f5; border-bottom: 1px solid #dfe2df; font: 500 12px var(--mono); color: var(--ink-2); }
+.browser .bar i { width: 9px; height: 9px; border-radius: 50%; background: #d3d6d3; }
+.browser .bar span { margin: 0 auto; background: #fff; border: 1px solid #e1e4e1; border-radius: 6px; padding: 2px 40px; }
+.browser .scr { width: 100%; display: block; object-fit: cover; object-position: top; }
+.phone { position: absolute; background-image: url("../../public/media/fitty.jpg"); background-repeat: no-repeat; border-radius: 34px; box-shadow: 0 30px 60px -20px rgb(17 20 18 / .5); }
+.cap { position: absolute; font: 600 13px var(--body); background: #fff; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; white-space: nowrap; z-index: 5; }
+.cap b { font-weight: 800; }
+
+/* nav */
+.nav { display: flex; align-items: center; height: 64px; padding: 0 40px; border-bottom: 1px solid var(--rule); position: relative; z-index: 6; background: #fff; }
+.nav .wm { font: 750 24px var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.nav nav { display: flex; gap: 28px; margin-left: 48px; font: 600 16px var(--body); }
+.nav .rt { margin-left: auto; display: flex; gap: 18px; align-items: center; font: 600 15px var(--body); }
+
+/* hero */
+.hero-d { height: 1000px; }
+.facts { display: flex; align-items: center; justify-content: space-between; padding: 28px 40px 0; }
+.who { font: 600 18px var(--body); display: flex; gap: 10px; align-items: center; }
+.who em { font-style: normal; color: var(--ink-2); }
+.linkset { display: flex; gap: 8px; }
+.linkset .btn { min-height: 44px; padding: 0 14px; font-size: 15px; }
+.hl { font: 750 96px/.95 var(--disp); font-stretch: 88%; letter-spacing: -.025em; padding: 26px 40px 0; }
+.subrow { display: flex; align-items: center; gap: 32px; padding: 20px 40px 0; }
+.subrow p { font: 500 22px/1.4 var(--body); max-width: 760px; }
+.stage { position: absolute; left: 0; right: 0; top: 400px; bottom: 0; }
+
+/* work */
+.finder { display: flex; align-items: center; gap: 16px; border: 1.5px solid var(--ink); border-radius: 12px; padding: 10px 10px 10px 18px; }
+.finder .q { font: 500 19px var(--body); color: var(--ink-2); margin-right: auto; }
+.chips { display: flex; gap: 6px; }
+.chips span { font: 600 15px var(--body); padding: 9px 14px; border: 1px solid var(--rule); border-radius: 8px; }
+.chips span.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.feat { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 32px; padding: 40px 0; border-bottom: 1px solid var(--rule); }
+.plate { position: relative; border-radius: 14px; overflow: hidden; }
+.spec { display: grid; gap: 14px; align-content: center; }
+.spec .nm { font: 750 52px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.spec p { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; }
+.spec dl { display: grid; grid-template-columns: 70px 1fr; gap: 6px 12px; margin: 0; font-size: 15px; }
+.spec dt { color: var(--ink-2); font-weight: 600; }
+.spec dd { margin: 0; }
+.spec .acts { display: flex; gap: 8px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 40px 0; border-bottom: 1px solid var(--rule); }
+.more td.nm { font: 750 28px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; white-space: nowrap; }
+.more td img { width: 120px; aspect-ratio: 16/10; object-fit: cover; border-radius: 6px; border: 1px solid var(--rule); display: block; }
+
+/* process */
+.blocks { position: relative; height: 300px; border-radius: 14px; }
+.blocks svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.blk { position: absolute; border: 1.5px solid var(--ink); background: #fff; border-radius: 10px; padding: 12px 16px; display: grid; gap: 2px; }
+.blk b { font: 750 28px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.blk span { font-size: 14px; color: var(--ink-2); }
+.blk.on { background: var(--green); border-color: var(--green); color: #fff; }
+.blk.on span { color: #d6eee2; }
+.out { position: absolute; display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: 6px 10px 6px 6px; font: 600 15px var(--body); }
+.out img { width: 56px; aspect-ratio: 16/10; object-fit: cover; border-radius: 4px; }
+.out em { font-style: normal; font-size: 13px; color: var(--green); display: block; font-weight: 700; }
+
+/* resume */
+.rs { display: grid; grid-template-columns: 4fr 8fr; gap: 40px; }
+.rs p.ab { font-size: 19px; line-height: 1.5; margin-bottom: 14px; max-width: 44ch; }
+.h3 { font: 750 24px/1 var(--disp); font-stretch: 88%; letter-spacing: -.01em; margin: 0 0 12px; display: flex; align-items: baseline; gap: 10px; }
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 24px; }
+.tools div { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+.tools div b { font-weight: 700; }
+.tools div span { font: 500 14px var(--body); color: var(--ink-2); }
+.tools div span i { font-style: normal; font: 700 15px var(--mono); color: var(--ink); margin-left: 8px; }
+
+/* availability */
+.status { display: flex; gap: 14px; align-items: center; font: 750 40px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.status .dot { width: 16px; height: 16px; box-shadow: 0 0 0 6px var(--green-2); }
+.opt { display: grid; grid-template-columns: 3fr 5fr 2fr 2fr auto; gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+.opt b { font: 750 30px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+.months { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 28px; }
+.months div { border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; border: 1px solid var(--rule); }
+.months b { font: 750 22px/1 var(--disp); font-stretch: 88%; }
+.months span { font: 600 14px var(--body); }
+.months .bk { color: var(--ink-2); background: repeating-linear-gradient(-45deg, #f3f4f2 0 6px, #fff 6px 12px); }
+.months .op { background: var(--green-2); border-color: #9ccfb6; }
+
+/* contact */
+.big { font: 750 96px/.95 var(--disp); font-stretch: 88%; letter-spacing: -.025em; }
+.links { border-top: 1.5px solid var(--ink); margin-top: 28px; }
+.links > div { display: grid; grid-template-columns: 220px 1fr auto; gap: 24px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.links b { font: 750 28px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; }
+
+/* mobile */
+.mob .nav { height: 52px; padding: 0 16px; }
+.mob .nav .wm { font-size: 20px; }
+.mob .hl { font-size: 48px; padding: 14px 16px 0; }
+.mob .h2 { font-size: 36px; }
+.mob .big { font-size: 52px; }
+.mob .spec .nm { font-size: 34px; }
+
+/* motion strips */
+.motion { grid-column: 1 / -1; display: grid; grid-template-columns: 420px 1fr 760px; gap: 40px; margin-top: 32px; padding: 24px; background: #151816; color: #eee; border-radius: 4px; }
+.motion h3 { font: 750 36px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; color: #fff; }
+.motion .lab { font: 700 14px var(--mono); color: #6fd3a3; margin-bottom: 10px; }
+.kfs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: start; }
+.kf { display: grid; gap: 8px; }
+.kf .scr { position: relative; height: 170px; overflow: hidden; background: #fff; color: var(--ink); border-radius: 6px; }
+.kf .t { font: 700 13px var(--mono); color: #6fd3a3; }
+.kf p { font-size: 14px; line-height: 1.4; color: #ccc; }
+.kf .arrow { position: absolute; font: 700 22px var(--mono); color: var(--fold); }
+.b { position: absolute; background: currentColor; border-radius: 3px; }
+.b.g { opacity: .2; } .b.k { background: var(--green); } .b.o { background: none; border: 2px solid currentColor; } .b.st { background: var(--stage); }
+table.sp { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.4; }
+table.sp th { text-align: left; font: 700 13px var(--mono); color: #6fd3a3; padding: 7px 10px 7px 0; vertical-align: top; width: 110px; white-space: nowrap; }
+table.sp td { padding: 7px 0; border-top: 1px solid #2c302d; vertical-align: top; }
+table.sp tr:first-child td { border-top: 0; }
+
+/* system */
+.sys { margin-top: 96px; padding-top: 48px; border-top: 3px solid var(--ink); }
+.sys > h2 { font-size: 110px; margin-bottom: 40px; }
+.panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.panel { background: var(--sheet); padding: 32px; }
+.panel h3 { font: 750 44px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; margin-bottom: 8px; }
+.panel .pd { font-size: 16px; color: var(--ink-2); margin-bottom: 24px; }
+.span2 { grid-column: span 2; } .span3 { grid-column: 1 / -1; }
+.ts div { display: grid; grid-template-columns: 1fr 210px; gap: 16px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--rule); }
+.ts code { font: 600 13px/1.5 var(--mono); color: var(--ink-2); }
+.sw { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.sw div { display: grid; gap: 6px; }
+.sw i { height: 84px; border: 1px solid var(--rule); display: block; border-radius: 8px; }
+.sw b { font: 700 14px var(--mono); } .sw span { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+.spc div { display: grid; grid-template-columns: 90px 50px 1fr; gap: 14px; align-items: center; padding: 6px 0; font: 600 14px var(--mono); }
+.spc i { height: 20px; background: var(--green); display: block; border-radius: 3px; }
+.spc small { font: 500 13px var(--body); color: var(--ink-2); grid-column: 3; }
+table.t { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.45; }
+table.t th { text-align: left; font: 700 14px var(--mono); padding: 10px 14px 10px 0; border-bottom: 2px solid var(--ink); }
+table.t td { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.t td:first-child { font: 700 15px var(--mono); white-space: nowrap; }
+.bgsys { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.laylist div { padding: 14px 0; border-top: 1px solid var(--rule); font-size: 15px; line-height: 1.45; }
+.laylist b { font: 700 15px var(--mono); display: block; }
+.mx { display: grid; grid-template-columns: 200px repeat(4, 1fr); gap: 12px; }
+.mx > b { font: 700 14px var(--mono); align-self: end; }
+.mx .secn { font: 750 28px/1 var(--disp); font-stretch: 88%; letter-spacing: -.02em; align-self: center; }
+.cell { display: grid; gap: 8px; }
+.wire { display: grid; gap: 3px; grid-auto-rows: 12px; grid-auto-flow: row dense; background: #f3f4f2; padding: 6px; border: 1px solid var(--rule); border-radius: 6px; }
+.wire i { background: #2d322e; border-radius: 2px; }
+.wire i.a { background: #9aa39c; } .wire i.l { background: #cfd4cf; } .wire i.g { background: var(--green); }
+.cell p { font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div>
+    <div class="mono" style="margin-bottom:16px">phatlines · landing page redesign · design board v3 · 2026-11-02 · not built</div>
+    <h1 class="D">The working sheet</h1>
+    <p class="sub">An engineer's portfolio that shows the software. Websites, web apps, iOS and Mac apps appear in real browser, phone and Mac frames, with their stack written beside them. The calm, ruled structure of v2 stays; its datasheet costume is gone.</p>
+    <div class="was"><div><b>v1 → v2</b> Dropped the film look (slate, timecode, grain, contour shader).</div><div><b>v2 → v3</b> Dropped the datasheet costume: part number, pin chip, "in stock", "ordering information", revision history. The hero now leads with the real claim, "I build websites and apps.", over a stage of live product screens. Featured work is shown large in device frames. Red is replaced by circuit-board green, and the display type is wider and mixed case.</div></div>
+  </div>
+  <div class="legend">
+    <div><span class="prop">proposed</span> copy that is new or rewritten. Everything else is verbatim from <b>site.ts</b> / <b>projects.ts</b></div>
+    <div><span class="prop ph">placeholder</span> generic text for Muyiwa to replace (experience, dates, rates)</div>
+    <div><i style="background:var(--fold)"></i> fold line: 1440×900 desktop, 375×812 mobile</div>
+    <div><i style="background:var(--green)"></i> green #0f6b45: the primary action, availability and active states. Nothing else.</div>
+    <div>Frames are 1:1 at 1440 and 375 CSS px. The 768 and 1280 layouts are in the responsive matrix.</div>
+  </div>
+</header>
+
+<section class="order">
+  <div><h2 class="D">Page order</h2><p style="margin-top:12px;font-size:17px">Was: Hero (finder) → Make → Work → About → Contact.<br>Now: one line on why each section sits where it does.</p></div>
+  <ol id="order"></ol>
+</section>
+
+<!-- HERO -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">00 NAV + 01 HERO</div>
+    <h2 class="D">Hero</h2>
+    <p class="why">The hero leads with what you do, in your words: "I build websites and apps." Underneath it is proof you can see: a browser, a phone and a Mac window showing three shipped products. Name, UK, availability, GitHub, X and resume all sit above the fold.</p>
+    <div class="notes">
+      <div><b>Composition</b> Not a split hero. A facts line runs across the top, the headline spans the full width, and the device stage spans the full width underneath, bleeding past the fold so it invites the scroll.</div>
+      <div><b>Stage</b> Invoicely (web app) in a browser plays its real loop. Fitty (iOS) is a phone. Kapture (Mac) is a window behind. Each has a caption chip with type and stack.</div>
+      <div><b>Copy</b> The headline is <i>hero.heading</i>. The sub line and button labels are <span class="prop">proposed</span>.</div>
+    </div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 900 (+100)</span><span></span></div>
+    <div class="frame desk hero-d">
+      <div class="nav"><span class="wm">phatlines</span><nav><span>Work</span><span>Process</span><span>Resume</span><span>Contact</span></nav>
+        <span class="rt"><span style="display:flex;gap:10px;align-items:center"><i class="dot"></i>Available from Dec <span class="prop ph">placeholder</span></span><span class="btn go" style="min-height:42px">Start a project</span></span></div>
+      <div class="facts"><div class="who">Muyiwa Adebayo <em>·</em> Software engineer <em>·</em> United Kingdom</div>
+        <div class="linkset" id="links-d"></div></div>
+      <h1 class="hl">I build websites and apps.</h1>
+      <div class="subrow"><p>Websites, web apps, iOS and Mac apps, designed and built end to end. Taking freelance and contract work. <span class="prop">proposed</span></p><span class="btn go">Start a project</span><span class="btn">See the work</span></div>
+      <div class="stage gridplate" id="stage-d"></div>
+      <div class="fold" style="top:900px"><span>FOLD 900 · name, role, UK, availability, GitHub, X, resume above</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375 × 812</span><span>+88</span></div>
+    <div class="frame mob" style="height:900px">
+      <div class="nav"><span class="wm">phatlines</span><span class="rt" style="gap:12px"><span style="display:flex;gap:8px;align-items:center;font-size:14px"><i class="dot"></i>Available</span><svg width="22" height="22" viewBox="0 0 22 22"><path d="M3 6h16M3 11h16M3 16h16" stroke="#111" stroke-width="2.2"/></svg></span></div>
+      <div class="who" style="font-size:15px;padding:16px 16px 0;flex-wrap:wrap;gap:6px">Muyiwa Adebayo <em>·</em> Software engineer <em>·</em> UK</div>
+      <h1 class="hl">I build websites and apps.</h1>
+      <p style="font:500 17px/1.45 var(--body);padding:12px 16px 0">Websites, web apps, iOS and Mac apps, end to end. Taking freelance and contract work from Dec.</p>
+      <div style="padding:16px 16px 0;display:grid;gap:8px">
+        <span class="btn go">Start a project</span>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="links-m"></div>
+      </div>
+      <div class="stage gridplate" id="stage-m" style="top:470px"></div>
+      <div class="fold" style="top:812px"><span>FOLD 812</span></div>
+    </div>
+  </div>
+  <div class="motion" data-m="hero"></div>
+  <div class="motion" data-m="nav"></div>
+</div>
+
+<!-- WORK -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">02 WORK</div>
+    <h2 class="D">Selected Work</h2>
+    <p class="why">Proof comes straight after the claim. The four strongest projects, one per platform (web app, website, iOS, Mac), are shown large in their real frame with role, stack and links. The rest are a compact table.</p>
+    <div class="notes">
+      <div><b>Images</b> These are real screenshots in device frames. SPORI's browser holds the tall page capture, which scrolls inside the frame. Fitty uses the phone from its poster.</div>
+      <div><b>Finder</b> "What are you building today?" plus platform chips filter featured items and table rows together. The Motion chip is dropped <span class="prop">proposed</span>.</div>
+      <div><b>Films</b> The spec ad is one row under "Side projects" in the compact table.</div>
+    </div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 2040</span><span></span></div>
+    <div class="frame desk d">
+      <div class="secline"><h2 class="h2">Selected Work</h2><span class="rt">7 shipped in 2026 · 1 side project</span></div>
+      <div class="finder"><span class="q">What are you building today?</span><div class="chips"><span class="on">All</span><span>Website</span><span>Web app</span><span>iOS + Android</span><span>Mac app</span></div></div>
+      <div id="featured"></div>
+      <h3 class="h3" style="margin-top:36px">More work</h3>
+      <table class="ds more" id="more"></table>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:28px"><span style="font:600 20px var(--body)">Like what you see? Let's make yours.</span><span class="btn go">Start a project</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375</span><span></span></div>
+    <div class="frame mob m">
+      <h2 class="h2">Selected Work</h2>
+      <div class="chips" style="margin:16px 0 8px;overflow:hidden"><span class="on">All</span><span>Website</span><span>Web app</span><span>iOS</span></div>
+      <div id="featured-m"></div>
+      <h3 class="h3" style="margin-top:24px">More work</h3>
+      <div id="more-m"></div>
+    </div>
+  </div>
+  <div class="motion" data-m="work"></div>
+</div>
+
+<!-- PROCESS -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">03 PROCESS (WAS MAKE)</div>
+    <h2 class="D">From brief to launch</h2>
+    <p class="why">After the proof comes how working together goes. Four steps, brief in and launch out, with each kind of job wired to the shipped project that proves it.</p>
+    <div class="notes">
+      <div><b>Jobs</b> These come from make.jobs. "Motion design" is removed and "Mac apps → Kapture, Sorti" is added <span class="prop">proposed</span>.</div>
+      <div><b>No pin</b> It scrolls normally. It used to pin for 2.3 screens.</div>
+      <div><b>Copy</b> make.heading and about[1] are verbatim. The step captions are <span class="prop">proposed</span>.</div>
+    </div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 620</span><span></span></div>
+    <div class="frame desk d">
+      <div class="secline"><h2 class="h2">From brief to launch</h2><span class="rt">How we'd work together</span></div>
+      <div style="display:grid;grid-template-columns:3fr 9fr;gap:40px">
+        <p style="font-size:20px;line-height:1.5">I work end to end: you bring the brief, I design and build it, and we review it together until it's right.</p>
+        <div class="blocks gridplate">
+          <svg viewBox="0 0 920 300" preserveAspectRatio="none"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#111412"/></marker></defs>
+            <g stroke="#111412" stroke-width="2" fill="none"><path d="M178 62 H212" marker-end="url(#ah)"/><path d="M398 62 H432" marker-end="url(#ah)"/><path d="M618 62 H652" marker-end="url(#ah)"/>
+            <path d="M745 100 V150"/><path d="M100 150 H835"/><path d="M100 150 V196" marker-end="url(#ah)"/><path d="M284 150 V196" marker-end="url(#ah)"/><path d="M468 150 V196" marker-end="url(#ah)"/><path d="M652 150 V196" marker-end="url(#ah)"/><path d="M835 150 V196" marker-end="url(#ah)"/></g></svg>
+          <div class="blk" style="left:20px;top:24px;width:158px"><b>Brief</b><span>you bring it</span></div>
+          <div class="blk" style="left:216px;top:24px;width:182px"><b>Design</b><span>screens and flows</span></div>
+          <div class="blk on" style="left:436px;top:24px;width:182px"><b>Build</b><span>code, end to end</span></div>
+          <div class="blk" style="left:656px;top:24px;width:200px"><b>Review, launch</b><span>until it's right</span></div>
+          <div id="outs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375</span><span></span></div>
+    <div class="frame mob m">
+      <h2 class="h2">From brief to launch</h2>
+      <p style="font-size:17px;margin:12px 0 16px">You bring the brief, I design and build it, and we review it together until it's right.</p>
+      <div id="flow-m"></div>
+    </div>
+  </div>
+  <div class="motion" data-m="process"></div>
+</div>
+
+<!-- RESUME -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">04 ABOUT + RESUME</div>
+    <h2 class="D">Resume</h2>
+    <p class="why">By now a recruiter wants the record. About, experience, a stack counted from the shipped projects, roles and GitHub sit in one section, with the PDF one click away.</p>
+    <div class="notes">
+      <div><b>Stack counts</b> are real, counted from projects[].stack: React 3, TypeScript 2, Tailwind CSS 2, Swift 2, SwiftUI 2, and 1 for the rest.</div>
+      <div><b>Copy</b> about[0] keeps its first sentence here. "I also make motion films on the side" moves to a short note <span class="prop">proposed</span>. Experience is <span class="prop ph">placeholder</span>.</div>
+    </div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 900</span><span></span></div>
+    <div class="frame desk d">
+      <div class="secline"><h2 class="h2">About &amp; resume <span class="prop">proposed</span></h2><span class="rt"><span class="btn ink">Download resume (PDF)</span></span></div>
+      <div class="rs">
+        <div>
+          <p class="ab">phatlines is a software engineer based in the United Kingdom.</p>
+          <p class="ab">I work end to end: you bring the brief, I design and build it, and we review it together until it's right.</p>
+          <h3 class="h3" style="margin-top:28px">Roles</h3>
+          <table class="ds"><tr><td>Design + build</td><td class="muted" style="text-align:right">7 projects</td></tr><tr><td>Concept, motion, edit and sound</td><td class="muted" style="text-align:right">1 film</td></tr></table>
+          <p class="muted" style="font-size:16px;margin-top:20px">I also make motion films on the side, which is where the care for interface motion comes from.</p>
+        </div>
+        <div>
+          <h3 class="h3">Experience <span class="prop ph">placeholder</span></h3>
+          <table class="ds"><tr><th>When</th><th>Role</th><th>Where</th><th>What shipped</th></tr>
+            <tr><td class="mono">2024–now</td><td><b>Software engineer, freelance</b></td><td>phatlines</td><td class="muted">Websites, web apps, iOS and Mac apps for founders, studios and small businesses</td></tr>
+            <tr><td class="mono">2022–24</td><td><b>[Job title]</b></td><td>[Company]</td><td class="muted">[What you shipped and the result]</td></tr>
+            <tr><td class="mono">2020–22</td><td><b>[Job title]</b></td><td>[Company]</td><td class="muted">[Scope, team size, stack]</td></tr>
+            <tr><td class="mono">[Year]</td><td><b>[Degree / course]</b></td><td>[Institution]</td><td class="muted">[Optional]</td></tr></table>
+          <h3 class="h3" style="margin-top:32px">Stack <span class="muted" style="font:500 14px var(--body)">· used in N shipped projects</span></h3>
+          <div class="tools" id="tools"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:14px 16px;background:var(--stage);border-radius:10px"><span><b>GitHub</b> <span class="muted">Public repos at github.com/phatlines · pinned: [repo], [repo]</span> <span class="prop ph">placeholder</span></span><span class="btn" style="min-height:40px">Open GitHub</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375</span><span></span></div>
+    <div class="frame mob m">
+      <h2 class="h2">About &amp; resume</h2>
+      <p style="font-size:17px;margin:12px 0 14px">phatlines is a software engineer based in the United Kingdom.</p>
+      <span class="btn ink" style="width:100%;margin-bottom:20px">Download resume (PDF)</span>
+      <h3 class="h3">Experience</h3>
+      <table class="ds" style="margin-bottom:20px"><tr><td class="mono" style="font-size:14px">2024–now</td><td><b>Software engineer, freelance</b><br><span class="muted">phatlines</span></td></tr><tr><td class="mono" style="font-size:14px">2022–24</td><td><b>[Job title]</b><br><span class="muted">[Company]</span></td></tr><tr><td class="mono" style="font-size:14px">2020–22</td><td><b>[Job title]</b><br><span class="muted">[Company]</span></td></tr></table>
+      <h3 class="h3">Stack</h3>
+      <div class="tools" id="tools-m" style="grid-template-columns:1fr 1fr;gap:0 16px"></div>
+    </div>
+  </div>
+  <div class="motion" data-m="resume"></div>
+</div>
+
+<!-- AVAILABILITY -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">05 AVAILABILITY + FREELANCE</div>
+    <h2 class="D">Availability</h2>
+    <p class="why">The terms come right before the ask: three ways to work together, and which months are open. Freelance comes first.</p>
+    <div class="notes">
+      <div><b>One source</b> A proposed <i>site.availability</i> object feeds the nav dot, the hero sub line and this section.</div>
+      <div><b>Copy</b> The lead is about[2], verbatim. Lengths, rates and months are <span class="prop ph">placeholder</span>.</div>
+    </div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 700</span><span></span></div>
+    <div class="frame desk d">
+      <div class="secline"><h2 class="h2">Availability <span class="prop">proposed</span></h2><span class="rt"><span class="status" style="font-size:28px"><i class="dot"></i>Taking work from December 2026</span></span></div>
+      <p style="font-size:22px;max-width:60ch;margin-bottom:12px">Open to new projects with founders, studios and small businesses, in the UK and anywhere else.</p>
+      <div class="opt"><b>Freelance project</b><span>Website, landing page, web app, iOS or Mac app. Fixed scope, design + build.</span><span class="mono">[2–6 weeks]</span><span class="mono">[from £X]</span><span class="btn go">Start a project</span></div>
+      <div class="opt"><b>Contract</b><span>Join your team as a front-end or full-stack engineer.</span><span class="mono">[2–5 days/wk]</span><span class="mono">[day rate]</span><span class="btn">Ask about dates</span></div>
+      <div class="opt"><b>Full-time role</b><span>Open to the right engineering role, UK or remote.</span><span class="mono">[notice]</span><span class="mono">—</span><span class="btn">Resume PDF</span></div>
+      <div class="months"><div class="bk"><b>Nov</b><span>Booked</span></div><div class="op"><b>Dec</b><span>1 slot</span></div><div class="op"><b>Jan</b><span>Open</span></div><div class="op"><b>Feb</b><span>Open</span></div><div class="op"><b>Mar</b><span>Open</span></div><div class="op"><b>Apr</b><span>Open</span></div></div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375</span><span></span></div>
+    <div class="frame mob m">
+      <h2 class="h2">Availability</h2>
+      <div class="status" style="font-size:24px;margin:14px 0"><i class="dot"></i>From December 2026</div>
+      <p style="font-size:17px;margin-bottom:12px">Open to new projects with founders, studios and small businesses, in the UK and anywhere else.</p>
+      <div class="months" style="grid-template-columns:repeat(3,1fr);margin:0 0 8px"><div class="bk"><b>Nov</b><span>Booked</span></div><div class="op"><b>Dec</b><span>1 slot</span></div><div class="op"><b>Jan</b><span>Open</span></div></div>
+      <div id="opt-m"></div>
+    </div>
+  </div>
+  <div class="motion" data-m="avail"></div>
+</div>
+
+<!-- CONTACT -->
+<div class="row">
+  <aside class="annot">
+    <div class="n">06 CONTACT</div>
+    <h2 class="D">Start a project</h2>
+    <p class="why">The ask. Every channel from the hero repeats here, so nobody has to scroll back up.</p>
+    <div class="notes"><div><b>Copy</b> contact.* is verbatim. The GitHub and Resume rows are <span class="prop">proposed</span>.</div></div>
+  </aside>
+  <div>
+    <div class="flabel"><span>1440 × 640</span><span></span></div>
+    <div class="frame desk d">
+      <h2 class="big">Start a project</h2>
+      <p style="font-size:22px;margin-top:16px">Tell me what you're making. I reply within two working days.</p>
+      <div class="links">
+        <div><b>Email</b><span class="mono">phatlines@proton.me</span><span class="btn go">Copy email</span></div>
+        <div><b>X (Twitter)</b><span class="mono">@phatlines_</span><span class="btn">Follow</span></div>
+        <div><b>GitHub</b><span class="mono">github.com/phatlines</span><span class="btn">Follow</span></div>
+        <div><b>Resume</b><span class="mono">PDF · updated [month]</span><span class="btn">Download</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:32px;font:600 15px var(--body);color:var(--ink-2)"><span>© 2026 phatlines. All rights reserved.</span><span>Back to top</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="flabel"><span>375</span><span></span></div>
+    <div class="frame mob m">
+      <h2 class="big">Start a project</h2>
+      <p style="font-size:17px;margin-top:12px">Tell me what you're making. I reply within two working days.</p>
+      <span class="btn go" style="width:100%;margin-top:16px">Copy email</span>
+      <div class="links" style="margin-top:18px" id="links-c-m"></div>
+      <p style="font-size:14px;margin-top:18px" class="muted">© 2026 phatlines. All rights reserved.</p>
+    </div>
+  </div>
+  <div class="motion" data-m="contact"></div>
+</div>
+
+<div class="row" style="display:block"><div class="motion" data-m="bg" style="margin-top:0"></div></div>
+
+<!-- SYSTEM -->
+<section class="sys">
+  <h2 class="D">System</h2>
+  <div class="panels">
+    <div class="panel">
+      <h3>Type scale</h3>
+      <p class="pd">Anybody at 88% width and weight 750, set in mixed case, is the display voice. It's self-hosted in /public/fonts. Hanken stays for text. The system mono is for dates, rates and URLs only. Display tops out at 96px and nothing goes below 15px.</p>
+      <div class="ts" id="ts"></div>
+    </div>
+    <div class="panel">
+      <h3>Colour tokens</h3>
+      <p class="pd">Restrained: a white page and near-black ink, with one circuit-board green that does three jobs (the primary action, availability and active states). A pale stage grey sits behind devices to give the screenshots a surface. Project colours appear only inside their own screens.</p>
+      <div class="sw" id="sw"></div>
+    </div>
+    <div class="panel">
+      <h3>Spacing scale</h3>
+      <p class="pd">A 4px base. Section padding becomes a fixed token instead of 12–14vh, which grew to about 150px on tall screens.</p>
+      <div class="spc" id="sp"></div>
+      <table class="t" style="margin-top:20px">
+        <tr><th>token</th><th>375</th><th>768</th><th>1280</th><th>1440</th></tr>
+        <tr><td>--section-y</td><td>40</td><td>48</td><td>64</td><td>64</td></tr>
+        <tr><td>today 12–14vh</td><td>97–114</td><td>123–143</td><td>108–126</td><td>108–151</td></tr>
+        <tr><td>--pad</td><td>16</td><td>24</td><td>32</td><td>40</td></tr>
+        <tr><td>cols / gap</td><td>4 / 12</td><td>8 / 20</td><td>12 / 24</td><td>12 / 32</td></tr>
+        <tr><td>featured row</td><td>24</td><td>32</td><td>40</td><td>40</td></tr>
+        <tr><td>max content</td><td colspan="4">1360px, centred above 1440</td></tr>
+      </table>
+    </div>
+
+    <div class="panel span2">
+      <h3>Background system: page, stage, screens</h3>
+      <p class="pd">This replaces v1's contour shader, grain and colour changes. The depth comes from the work itself: real screens in device frames, sitting on a pale stage, on a white page. It needs no WebGL, so the OGL Backdrop is removed. Lenis stays.</p>
+      <div class="bgsys">
+        <div class="gridplate" style="position:relative;height:360px;border-radius:14px" id="bgdemo"></div>
+        <div class="laylist">
+          <div><b>L0 · page (CSS)</b>White #fff. Clients and recruiters read it at a desk in daylight, often beside a brief or a job spec.</div>
+          <div><b>L1 · stage (CSS)</b>A pale grey #eef0ed panel with an 8px grid at 5% ink. It sits only behind device stages and the process diagram, where something has been built.</div>
+          <div><b>L2 · devices (CSS)</b>Browser, phone and Mac frames with a real two-layer shadow (offset and blur). This is the only elevated layer on the page.</div>
+          <div><b>L3 · screens (media)</b>The real screenshots and loops. They're the only colour on the page apart from the green.</div>
+          <div><b>Removed</b> The OGL contour Backdrop, Grain, data-paint colour changes, the letter-rain and clap openings, Gebuk, and v2's datasheet parts (MA-01, pins, running heads).</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Motion rules</h3>
+      <p class="pd">There is one authored moment: the device stage arriving with live screens. Everything else is quick and functional.</p>
+      <table class="t">
+        <tr><th>name</th><th>value</th></tr>
+        <tr><td>--ease-out</td><td>cubic-bezier(.22, 1, .36, 1) for CSS</td></tr>
+        <tr><td>easeOut</td><td>expo.out for entrances</td></tr>
+        <tr><td>easeSoft</td><td>power3.out for rows</td></tr>
+        <tr><td>stage (new)</td><td>0.9s per device, stagger 0.12, y 40 → 0</td></tr>
+        <tr><td>words</td><td>0.8s, stagger 0.06, mask rise</td></tr>
+        <tr><td>row</td><td>0.4s, stagger 0.04, y 8 → 0</td></tr>
+        <tr><td>hover</td><td>160ms fills, 240ms lifts</td></tr>
+        <tr><td>Lenis</td><td>lerp 0.1</td></tr>
+        <tr><td>removed</td><td>scene arcs, scroll skew, pinned word reel, page colour tween</td></tr>
+        <tr><td>reduced</td><td>RESPECT_REDUCED_MOTION is false today (owner's call). Every fallback below is ready for when it's set to true.</td></tr>
+      </table>
+    </div>
+
+    <div class="panel span3">
+      <h3>Responsive matrix: every section at 375, 768, 1280 and 1440</h3>
+      <p class="pd">Each wireframe is drawn on that width's own column grid (4, 8, 12 and 12). Black is display type, mid grey is a device or screenshot, light grey is text and green is the primary action.</p>
+      <div class="mx" id="mx"></div>
+    </div>
+
+    <div class="panel span3">
+      <h3>Problems → fixes</h3>
+      <p class="pd">Your two rounds of feedback, plus the six problems from the brief. Each row gives the decision that fixes it and where it shows on this board.</p>
+      <table class="t" id="pt"></table>
+    </div>
+  </div>
+</section>
+
+<script>
+const M = s => `../../public/media/${s}`;
+const AR = `<svg class="ar" viewBox="0 0 12 12"><path d="M3 9L9 3M4 3h5v5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>`;
+const DL = `<svg class="ar" viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3M2 11h8" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>`;
+const P = [
+  ["spori","SPORI","Website","React · TypeScript · Tailwind CSS · Framer Motion · Vercel","A cinematic website for Spori Studeos, an architecture, interiors and construction studio in Ikorodu, Lagos. Built to turn visitors into project inquiries.","Design + build"],
+  ["ayomide","Ayomide","Website","React · TypeScript · Motion · Lenis","A portfolio for Ayomide Adeji, a social media specialist, rebuilt by hand in React to push the motion further.","Design + build"],
+  ["african-skin-code","A.S.C","Website","React · Netlify","A one-page website for The African Skin Code™, a digital guide and workbook for melanin-rich skin, built to turn readers into buyers.","Design + build"],
+  ["invoicely","Invoicely","Web app","Next.js · Supabase · Tailwind CSS","Credit control for big and small consultancies: who to chase, how, and exactly what to say.","Design + build"],
+  ["fitty","Fitty","iOS + Android","Flutter · Firebase","A fitness app that measures consistency, not personal bests.","Design + build"],
+  ["kapture","Kapture","Mac app","Swift · SwiftUI · Chrome extension","A small widget that shows what each of your AI coding tools is doing right now.","Design + build"],
+  ["sorti","Sorti","MacOS app","Swift · SwiftUI","A menu bar app that keeps your Downloads folder tidy with simple if/then rules.","Design + build"],
+  ["specad","Spec ad","Side projects","Motion graphics","“First Sale”: a 27-second spec ad for Shopify, made on my own time. Not commissioned by Shopify.","Concept, motion, edit and sound"],
+];
+// device helpers (px)
+const browser=(x,y,w,h,src,url,z=2,extra="")=>`<div class="browser" style="left:${x}px;top:${y}px;width:${w}px;z-index:${z};${extra}"><div class="bar"><i></i><i></i><i></i><span>${url}</span></div><img class="scr" src="${M(src)}" style="height:${h-30}px"></div>`;
+// the phone is cropped out of fitty.jpg: phone occupies x 578–806, y 20–518 of 960×540
+const phone=(x,y,w,z=4)=>{const s=w/228;return `<div class="phone" style="left:${x}px;top:${y}px;width:${w}px;height:${Math.round(498*s)}px;background-size:${Math.round(960*s)}px auto;background-position:-${Math.round(578*s)}px -${Math.round(20*s)}px;z-index:${z}"></div>`};
+const cap=(x,y,name,rest)=>`<span class="cap" style="left:${x}px;top:${y}px"><b>${name}</b> · ${rest}</span>`;
+
+// hero links
+const LINKS=[["GitHub","/phatlines",AR],["X","@phatlines_",AR],["Resume","PDF",DL]];
+document.getElementById("links-d").innerHTML=LINKS.map(l=>`<span class="btn">${l[0]} <small>${l[1]}</small>${l[2]}</span>`).join("");
+document.getElementById("links-m").innerHTML=LINKS.map(l=>`<span class="btn" style="padding:0 6px;font-size:15px;min-height:44px">${l[0]}${l[2]}</span>`).join("");
+// hero stage
+document.getElementById("stage-d").innerHTML =
+  `<div class="browser" style="left:860px;top:60px;width:520px;z-index:1"><div class="bar"><i></i><i></i><i></i><span>Kapture</span></div><img class="scr" src="${M("kapture.jpg")}" style="height:330px"></div>`+
+  browser(150,40,820,500,"invoicely-app.jpg","invoicely · web app",2)+
+  phone(1010,120,200,4)+
+  cap(150,560,"Invoicely","web app · Next.js, Supabase")+cap(1000,560,"Fitty","iOS + Android · Flutter")+cap(1230,420,"Kapture","Mac · Swift");
+document.getElementById("stage-m").innerHTML = browser(16,24,300,200,"invoicely-app.jpg","invoicely",2) + phone(236,70,120,4) + cap(16,236,"Invoicely","web app") + cap(220,320,"Fitty","iOS");
+
+// featured work
+const spec=(p,acts)=>`<div class="spec"><span class="tag" style="justify-self:start">${p[2]} · 2026</span><div class="nm">${p[1]}</div><p>${p[4]}</p><dl><dt>Role</dt><dd>${p[5]}</dd><dt>Stack</dt><dd>${p[3].split(" · ").join(", ")}</dd></dl><div class="acts"><span class="btn">View project</span>${acts?`<span class="btn">Live site${AR}</span>`:""}</div></div>`;
+const F=document.getElementById("featured");
+F.innerHTML=
+ `<div class="feat"><div class="plate gridplate" style="grid-column:1/9;height:440px">${browser(40,36,760,390,"invoicely-app.jpg","invoicely",2)}</div><div style="grid-column:9/13" >${spec(P[3],0)}</div></div>`+
+ `<div class="feat"><div style="grid-column:1/5">${spec(P[0],1)}</div><div class="plate gridplate" style="grid-column:5/13;height:440px">${browser(40,36,800,520,"spori-tall.jpg","spori-studeos.vercel.app",2)}</div></div>`+
+ `<div class="pair"><div><div class="plate gridplate" style="height:400px">${phone(220,26,160,2)}</div><div style="margin-top:20px">${spec(P[4],0)}</div></div><div><div class="plate gridplate" style="height:400px"><div class="browser" style="left:36px;top:40px;width:560px"><div class="bar"><i></i><i></i><i></i><span>Kapture</span></div><img class="scr" src="${M("kapture.jpg")}" style="height:330px"></div></div><div style="margin-top:20px">${spec(P[5],0)}</div></div></div>`;
+document.getElementById("more").innerHTML=`<tr><th></th><th>Project</th><th>Type</th><th>Stack</th><th>What it is</th><th></th></tr>`+[2,1,6].map(i=>P[i]).map(p=>`<tr><td><img src="${M(p[0]+".jpg")}"></td><td class="nm">${p[1]}</td><td>${p[2]}</td><td class="muted" style="font-size:14px">${p[3].split(" · ").join(", ")}</td><td style="max-width:420px">${p[4]}</td><td>${AR}</td></tr>`).join("")+`<tr><td colspan="6" style="font:600 14px var(--body);color:var(--ink-2);padding-top:20px">Side projects</td></tr><tr><td><img src="${M("specad.jpg")}"></td><td class="nm">Spec ad</td><td>Film</td><td class="muted" style="font-size:14px">Motion graphics</td><td>${P[7][4]}</td><td>${AR}</td></tr>`;
+// mobile work
+const fm=(dev,p)=>`<div style="padding:20px 0;border-bottom:1px solid var(--rule)"><div class="plate gridplate" style="height:200px;border-radius:10px">${dev}</div><div style="margin-top:12px;display:grid;gap:6px"><span class="tag" style="justify-self:start">${p[2]}</span><div class="spec"><div class="nm">${p[1]}</div></div><p style="font-size:15px;color:var(--ink-2)">${p[4]}</p><p style="font-size:14px"><b>Stack</b> ${p[3].split(" · ").slice(0,3).join(", ")}</p></div></div>`;
+document.getElementById("featured-m").innerHTML=fm(browser(16,18,311,170,"invoicely-app.jpg","invoicely",2),P[3])+fm(browser(16,18,311,240,"spori-tall.jpg","spori",2),P[0])+fm(phone(130,10,84,2),P[4])+fm(browser(16,18,311,190,"kapture.jpg","Kapture",2),P[5]);
+document.getElementById("more-m").innerHTML=[2,1,6,7].map(i=>P[i]).map(p=>`<div style="display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule)"><img src="${M(p[0]+".jpg")}" style="width:88px;aspect-ratio:16/10;object-fit:cover;border-radius:6px"><div><b style="font:750 24px/1 var(--disp);font-stretch:88%">${p[1]}</b><div class="muted" style="font-size:14px">${p[2]} · ${p[3].split(" · ")[0]}</div></div></div>`).join("");
+
+// process outputs
+const OUT=[["Websites","SPORI","spori.jpg"],["Landing pages","A.S.C","african-skin-code.jpg"],["SaaS","Invoicely","invoicely.jpg"],["iOS apps","Fitty","fitty.jpg"],["Mac apps","Kapture, Sorti","kapture.jpg"]];
+document.getElementById("outs").innerHTML=OUT.map((o,i)=>`<div class="out" style="left:${[20,200,384,568,752][i]}px;top:206px;width:${i===4?150:166}px"><img src="${M(o[2])}"><span>${o[0]}<em>${o[1]}</em></span></div>`).join("");
+document.getElementById("flow-m").innerHTML=[["Brief","you bring it"],["Design","screens and flows"],["Build","code, end to end"],["Review, launch","until it's right"]].map((f,i)=>`<div class="blk ${i===2?'on':''}" style="position:relative;margin-bottom:${i<3?22:0}px"><b>${f[0]}</b><span>${f[1]}</span>${i<3?'<i style="position:absolute;left:26px;bottom:-24px;height:22px;border-left:2px solid #111"></i>':''}</div>`).join("")+`<div style="display:grid;gap:8px;margin-top:20px">${OUT.map(o=>`<div class="out" style="position:relative"><img src="${M(o[2])}"><span>${o[0]}<em>${o[1]}</em></span></div>`).join("")}</div>`;
+
+// stack counts from projects (the 7 software projects)
+const cnt={};P.slice(0,7).forEach(p=>p[3].split(" · ").forEach(t=>cnt[t]=(cnt[t]||0)+1));
+const tools=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+const area=t=>({"Swift":"Apps","SwiftUI":"Apps","Flutter":"Apps","Chrome extension":"Apps","Supabase":"Data","Firebase":"Data","Vercel":"Deploy","Netlify":"Deploy"})[t]||"Web";
+document.getElementById("tools").innerHTML=tools.map(([t,n])=>`<div><b>${t}</b><span>${area(t)}<i>${n}</i></span></div>`).join("");
+document.getElementById("tools-m").innerHTML=tools.slice(0,10).map(([t,n])=>`<div><b>${t}</b><span><i>${n}</i></span></div>`).join("");
+document.getElementById("opt-m").innerHTML=[["Freelance project","Design + build, fixed scope · [2–6 wks · from £X]","Start a project",1],["Contract","Front-end or full-stack · [2–5 days/wk]","Ask about dates",0],["Full-time role","UK or remote","Resume PDF",0]].map(o=>`<div style="padding:16px 0;border-bottom:1px solid var(--rule)"><b style="font:750 26px/1 var(--disp);font-stretch:88%;letter-spacing:-.02em">${o[0]}</b><p style="font-size:15px;margin:6px 0 10px" class="muted">${o[1]}</p><span class="btn ${o[3]?'go':''}" style="width:100%;min-height:44px">${o[2]}</span></div>`).join("");
+document.getElementById("links-c-m").innerHTML=[["Email","phatlines@proton.me","Open"],["X","@phatlines_","Follow"],["GitHub","/phatlines","Follow"],["Resume","PDF","Get"]].map(l=>`<div style="grid-template-columns:1fr auto"><span><b>${l[0]}</b><br><span class="muted" style="font-size:14px">${l[1]}</span></span><span class="btn" style="min-height:44px">${l[2]}</span></div>`).join("");
+document.getElementById("bgdemo").innerHTML=browser(40,40,420,280,"spori-hd.jpg","spori-studeos.vercel.app",2)+phone(380,60,120,3)+cap(40,330,"L2 devices","L3 screens")+`<span class="cap" style="right:16px;left:auto;top:16px">L1 stage on L0 page</span>`;
+
+const ORDER=[
+ ["00","Nav","Wordmark, four links, a green availability dot and Start a project. Resume is one of the links."],
+ ["01","Hero","The claim in your words over three live product screens. Name, UK, availability, GitHub, X and resume all sit above the fold."],
+ ["02","Work","Proof right after the claim: four projects large, one per platform, then a compact table. Films are one side-project row."],
+ ["03","Process","How working together goes, with every kind of job wired to the shipped project that proves it."],
+ ["04","About + resume","The record recruiters look for: experience, a stack counted from shipped work, roles and GitHub."],
+ ["05","Availability","The terms right before the ask: freelance, contract or full-time, and the open months."],
+ ["06","Contact","The ask. It repeats every channel so nobody has to scroll back up."],
+];
+document.getElementById("order").innerHTML=ORDER.map(o=>`<li><span>${o[0]}</span><b>${o[1]}</b><p>${o[2]}</p></li>`).join("");
+
+const b=(x,y,w,h,c="")=>`<i class="b ${c}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%"></i>`;
+const a=(x,y,ch)=>`<span class="arrow" style="left:${x}%;top:${y}%">${ch}</span>`;
+const MOTION={
+ hero:{title:"Hero · the stage arrives",frames:[
+  ["0.0s · load","",b(4,8,60,5,"g")+b(4,20,90,14,"g")+b(0,52,100,48,"st"),"The nav, facts line and links are already visible. The headline words sit masked below their line and the stage is empty."],
+  ["0.0–0.8s · words","",b(4,8,60,5)+b(4,20,90,14)+b(0,52,100,48,"st")+a(46,36,"↑"),"Headline words rise out of their masks (0.8s, stagger 0.06, expo.out). The sub line and buttons fade up 0.2s later."],
+  ["0.3–1.4s · devices","",b(4,20,90,14)+b(0,52,100,48,"st")+b(10,56,52,40)+b(66,62,12,34,"k")+a(36,80,"↑"),"The devices rise 40px into place, browser first, then phone, then Mac (0.9s each, stagger 0.12). Each screen starts its real loop as it lands."],
+  ["scroll · depth","",b(0,0,100,100,"st")+b(10,20,52,60)+b(66,10,12,50,"k")+a(70,64,"↑"),"Scrubbed: the phone moves 40px faster than the browser as you scroll, so the stage reads as layered. Hovering a device lifts it 4px and shows 'Open Invoicely'."],
+ ],spec:[["moves","Headline words, sub line, three devices, their live screens, scroll parallax on the phone"],["trigger","Load (once per session), then scroll and hover"],["library","GSAP timeline + SplitText (words); ScrollTrigger scrub for the parallax; LoopClip for screens; CSS for hover"],["duration","Load 1.4s total · words 0.8 · devices 0.9 each · hover 240ms"],["easing","expo.out for words and devices · none (scrub) for parallax · --ease-out for hover"],["reduced","Everything is in place on first paint. Screens show their poster stills. No parallax."]]},
+ nav:{title:"Nav",frames:[
+  ["scroll > 80px","",b(0,0,100,14,"g")+b(4,4,16,6)+a(46,22,"↓"),"Past the hero, the bar gets a white backing with a 1px rule and shrinks from 64 to 56px."],
+  ["active link","",b(30,4,10,6)+b(30,11,10,2,"k"),"The current section's link gets a 2px green underline that slides between links as sections pass (FLIP, 240ms)."],
+  ["hover link","",b(44,4,10,6)+b(44,11,10,2)+a(46,20,"←"),"The underline draws in from the left (240ms)."],
+  ["availability","",`<i class="b" style="left:62%;top:5%;width:4%;height:6%;border-radius:50%;background:#0f6b45"></i>`+b(68,5,22,6,"g"),"The dot is static. Nothing on the page loops except the product screens."],
+ ],spec:[["moves","Bar backing and height, active underline, hover underline"],["trigger","Scroll (ScrollTrigger per section), hover"],["library","GSAP ScrollTrigger + Flip; CSS for hover"],["duration","Backing 0.3s · underline 240ms"],["easing","power3.out · --ease-out"],["reduced","The underline jumps without sliding. The backing appears instantly."]]},
+ work:{title:"Selected Work",frames:[
+  ["enter row","",b(0,10,62,80,"st")+b(6,18,50,64)+b(68,30,28,8,"g")+a(30,86,"↑"),"Each featured row's device rises 32px with its stage (0.8s, expo.out). The spec column follows 0.1s later."],
+  ["SPORI · scroll","",b(36,4,62,92,"st")+b(42,10,50,80)+b(44,14,46,140)+a(66,60,"↑"),"While SPORI's row is in view, its tall page capture scrolls inside the browser frame, tied to page scroll. You see the real site top to bottom."],
+  ["filter","",b(4,6,92,10,"o")+b(4,6,14,10)+b(4,24,92,30,"st")+b(4,60,92,6,"g"),"Choosing \"Web app\" collapses non-matching rows (Flip, 0.35s). The count in the header updates."],
+  ["click · open","",b(4,4,92,92,"o")+b(8,10,52,50)+b(64,10,30,6,"g"),"The project overlay opens, with the device growing out of its row (the existing match cut, cutIn 0.85s)."],
+ ],spec:[["moves","Device stages, spec columns, SPORI's in-frame scroll, filter, overlay"],["trigger","Scroll (rows at top 80%; SPORI scrubbed), filter click or typing, click"],["library","GSAP ScrollTrigger + Flip; the existing ProjectOverlay and LoopClip"],["duration","Rows 0.8s · in-frame scroll over the row's time in view · filter 0.35s · overlay 0.85s in, 0.6s out"],["easing","expo.out · none (scrub) · power4.inOut"],["reduced","Rows are shown. SPORI shows its top still. The filter reorders instantly. The overlay fades in 0.3s."]]},
+ process:{title:"From brief to launch",frames:[
+  ["enter","",b(0,0,100,100,"st")+b(4,14,18,22,"o")+b(28,14,18,22,"o")+b(52,14,18,22,"o")+b(76,14,20,22,"o"),"The four steps are drawn as outlines. The arrows are undrawn."],
+  ["scrub","",b(0,0,100,100,"st")+b(4,14,18,22)+b(28,14,18,22,"o")+b(22,24,6,2)+a(24,40,"→"),"Scrubbed: each arrow draws to the next step, which fills as the line reaches it. Build fills green."],
+  ["outputs","",b(0,0,100,100,"st")+b(50,40,1,24)+b(4,66,16,16,"o")+b(22,66,16,16,"o")+b(40,66,16,16,"o")+a(46,50,"↓"),"After Build, the bus drops to the five outputs and each thumbnail fades in."],
+  ["hover output","",b(0,0,100,100,"st")+b(4,66,16,16,"k")+a(8,84,"↗"),"Hovering an output lifts it 2px. Clicking scrolls to that project in Work."],
+ ],spec:[["moves","Arrows, step fills, output bus, output thumbnails"],["trigger","Scroll (scrubbed, top 70% → bottom 60%), hover, click"],["library","GSAP ScrollTrigger (scrub 0.5) on SVG stroke-dashoffset"],["duration","Scrubbed over about 0.5 screen · hover 160ms"],["easing","none (scrub) · --ease-out"],["reduced","The diagram is shown complete, with Build filled."]]},
+ resume:{title:"About + resume",frames:[
+  ["enter","",b(4,10,30,8)+b(40,10,56,40,"g")+a(60,56,"↑"),"Experience rows reveal (0.4s, stagger 0.04)."],
+  ["counts","",b(40,60,56,4,"g")+b(88,60,6,4,"k")+a(88,68,"↑"),"Stack counts tick from 0 to the real number (0.6s) once, as the stack enters."],
+  ["hover tool","",b(40,66,18,5,"k")+b(4,84,92,6,"o"),"Hovering a tool (React: 3) shows those three projects as small thumbnails in a tooltip."],
+  ["download","",b(70,4,26,10,"o")+b(70,4,26,10),"The resume button fills on hover (160ms). After clicking it shows \"Downloading\" for 1s."],
+ ],spec:[["moves","Experience rows, stack counts, tool tooltip, download button"],["trigger","Scroll (top 75%), hover, click"],["library","GSAP ScrollTrigger; CSS for hover and the tooltip"],["duration","Rows 0.4s · counts 0.6s · hover 160ms"],["easing","power3.out · power2.out for counts"],["reduced","Final counts are shown. Rows are static."]]},
+ avail:{title:"Availability",frames:[
+  ["enter","",b(4,8,40,10)+b(60,8,36,8,"g")+b(4,30,92,40,"g"),"The heading and options reveal (0.4s, stagger 0.06)."],
+  ["months","",b(4,80,14,12,"g")+b(20,80,14,12,"k")+b(36,80,14,12,"k")+a(54,80,"→"),"Month cells fill left to right, scrubbed. Booked months keep their hatch."],
+  ["hover option","",b(4,30,92,12,"g")+b(80,32,14,8,"k"),"The hovered option's row tints and its button fills (160ms)."],
+  ["cta","",b(80,32,14,8,"k")+a(84,44,"↓"),"Start a project opens the existing ContactCard (cardIn 0.45s)."],
+ ],spec:[["moves","Heading, options, month cells, row hover, contact card"],["trigger","Scroll (months scrubbed), hover, click"],["library","GSAP ScrollTrigger; the existing ContactCard"],["duration","Rows 0.4s · months about 0.4 screen · card 0.45s in, 0.2s out"],["easing","power3.out · none (scrub) · expo.out"],["reduced","Months are already filled. The card fades."]]},
+ contact:{title:"Contact",frames:[
+  ["enter","",b(4,14,70,22)+a(40,40,"↑"),"\"Start a project\" rises word by word, like the hero headline (0.8s, stagger 0.06)."],
+  ["rows","",b(4,52,92,1)+b(4,58,92,8,"g")+b(4,70,92,8,"g"),"Link rows reveal with their rules (stagger 0.06)."],
+  ["copy","",b(72,52,18,8,"k")+b(72,64,18,5,"g"),"Copy email changes to \"Copied\" for 1.6s. On failure it says \"Couldn't copy. The address is phatlines@proton.me\"."],
+  ["back to top","",a(88,70,"↑"),"Back to top scrolls through Lenis (1.0s)."],
+ ],spec:[["moves","Heading words, link rows, copy feedback, scroll to top"],["trigger","Scroll (top 75%), click"],["library","GSAP ScrollTrigger + SplitText; Lenis scrollTo"],["duration","Words 0.8s · rows 0.4s · copied 1.6s · scroll 1.0s"],["easing","expo.out · power3.out"],["reduced","The heading shows whole. Back to top jumps."]]},
+ bg:{title:"Background",frames:[
+  ["page","",b(0,0,100,100,"o"),"White. Nothing ambient moves behind the content."],
+  ["stage","",`<div class="gridplate" style="position:absolute;inset:14%;border-radius:8px"></div>`,"The pale grid stage appears only behind devices and the process diagram. It's static."],
+  ["devices","",`<div class="gridplate" style="position:absolute;inset:14%"></div>`+b(24,26,44,46)+b(62,34,12,34,"k"),"Devices are the only elevated layer, with a soft two-layer shadow."],
+  ["scroll","",b(0,0,100,12)+b(0,30,100,1,"g")+a(48,50,"↓"),"Lenis smooth scroll at lerp 0.1. The nav stays pinned."],
+ ],spec:[["moves","Nothing ambient. The nav is sticky and the screens play."],["trigger","Scroll"],["library","Lenis + GSAP ScrollTrigger; CSS for the stage. OGL and Grain are removed."],["duration","—"],["easing","—"],["reduced","Lenis off (native scroll)."]]},
+};
+document.querySelectorAll("[data-m]").forEach(el=>{const m=MOTION[el.dataset.m];
+  el.innerHTML=`<div><div class="lab">MOTION SPEC · storyboard (not working animation)</div><h3>${m.title}</h3></div><div class="kfs">${m.frames.map(f=>`<div class="kf"><span class="t">${f[0]}</span><div class="scr">${f[2]}</div><p>${f[3]}</p></div>`).join("")}</div><table class="sp">${m.spec.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join("")}</table>`;});
+
+const TS=[
+ ["--t-hero","I build websites and apps.","d","clamp(3rem, 6.7vw, 6rem) · 48 / 64 / 86 / 96 · Anybody 750, 88% width, -.025em, lh .95",96],
+ ["--t-section","Selected Work","d","clamp(2.25rem, 3.9vw, 3.5rem) · 36 / 40 / 50 / 56",56],
+ ["--t-project","Invoicely","d","clamp(2.125rem, 3.6vw, 3.25rem) · 34 / 40 / 46 / 52",52],
+ ["--t-h3","Experience","d","1.5rem · 24",24],
+ ["--t-lead","Websites, web apps, iOS and Mac apps.","b","clamp(1.0625rem, 1.5vw, 1.375rem) · 17 → 22 · Hanken 500",22],
+ ["--t-body","Tell me what you're making.","b","1.0625rem · 17 · lh 1.5 · measure ≤ 65ch",17],
+ ["--t-meta","Web app · Next.js, Supabase","b",".9375rem · 15 · tags, captions, tables (the floor)",15],
+ ["--t-data","2024–now · [2–6 weeks] · /phatlines","m",".9375rem · 15 · dates, rates, URLs only",15],
+];
+document.getElementById("ts").innerHTML=TS.map(t=>{const st=t[2]==="d"?"font-family:var(--disp);font-stretch:88%;font-weight:750;letter-spacing:-.02em":t[2]==="m"?"font-family:var(--mono)":"font-family:var(--body);font-weight:500";return `<div><span style="${st};font-size:${Math.min(t[4],64)}px;line-height:1;white-space:nowrap;overflow:hidden">${t[1]}</span><code><b>${t[0]}</b><br>${t[3]}</code></div>`}).join("");
+const SW=[["--page","#ffffff","Every section"],["--ink","#111412","Text, rules, secondary buttons"],["--green","#0f6b45","Primary action, availability, active state (6.9:1 with white)"],["--green-2","#e3f1ea","Open months, dot halo"],["--stage","#eef0ed","Behind devices and diagrams"],["--ink-2","#4b524d","Secondary text (8:1 on white)"],["--rule","#d5d9d5","Row rules, tag borders"],["::selection","#0f6b45","Selection, caret and focus ring all use the green"]];
+document.getElementById("sw").innerHTML=SW.map(s=>`<div><i style="background:${s[1]}"></i><b>${s[0]}</b><span>${s[1]}<br>${s[2]}</span></div>`).join("");
+const SP=[["--s-1",4,"icon nudges"],["--s-2",8,"button group gap, grid unit"],["--s-3",12,"cell padding, label → value"],["--s-4",16,"--pad 375"],["--s-5",24,"--pad 768, spec column gap"],["--s-6",32,"--pad 1280, column gap"],["--s-7",40,"--pad 1440, featured row padding"],["--s-8",48,"--section-y 768"],["--s-9",64,"--section-y 1280 / 1440"]];
+document.getElementById("sp").innerHTML=SP.map(s=>`<div><span>${s[0]}</span><span>${s[1]}</span><i style="width:${s[1]*3.4}px"></i><small>${s[2]}</small></div>`).join("");
+
+const C={375:4,768:8,1280:12,1440:12};
+const MX=[
+ ["Nav",{375:[[1,2,1],[3,1,1,"g"],[4,1,1]],768:[[1,2,1],[5,2,1,"g"],[7,2,1,"g"]],1280:[[1,2,1],[3,4,1,"l"],[9,2,1,"l"],[11,2,1,"g"]],1440:[[1,2,1],[3,4,1,"l"],[9,2,1,"l"],[11,2,1,"g"]]},{375:"Wordmark · Available dot · menu (Work, Process, Resume, Contact)",768:"Wordmark · dot · Start a project · menu",1280:"Full links · availability · Start a project",1440:"Same as 1280"}],
+ ["Hero",{375:[[1,4,1,"l"],[1,4,3],[1,4,1,"l"],[1,4,1,"g"],[1,4,1,"l"],[1,3,4,"a"],[4,1,4,"a"]],768:[[1,4,1,"l"],[5,4,1,"l"],[1,8,3],[1,5,1,"l"],[6,3,1,"g"],[1,6,5,"a"],[7,2,5,"a"]],1280:[[1,6,1,"l"],[8,5,1,"l"],[1,12,2],[1,7,1,"l"],[8,2,1,"g"],[2,7,6,"a"],[9,2,6,"a"],[11,2,4,"a"]],1440:[[1,6,1,"l"],[8,5,1,"l"],[1,12,2],[1,7,1,"l"],[8,2,1,"g"],[2,7,6,"a"],[9,2,6,"a"],[11,2,4,"a"]]},{375:"Facts → headline (3 lines) → sub → Start a project → GitHub / X / Resume row → stage (browser + phone) cut by the fold",768:"Headline on 2 lines; links in the facts row; stage of browser + phone",1280:"Headline on one line; three-device stage across the full width",1440:"As 1280"}],
+ ["Work",{375:[[1,4,1],[1,4,1,"l"],[1,4,4,"a"],[1,4,2,"l"],[1,4,4,"a"],[1,4,2,"l"]],768:[[1,8,1],[1,8,1,"l"],[1,8,5,"a"],[1,8,2,"l"],[1,4,4,"a"],[5,4,4,"a"]],1280:[[1,12,1],[1,12,1,"l"],[1,8,6,"a"],[9,4,6,"l"],[1,4,6,"l"],[5,8,6,"a"],[1,6,5,"a"],[7,6,5,"a"]],1440:[[1,12,1],[1,12,1,"l"],[1,8,6,"a"],[9,4,6,"l"],[1,4,6,"l"],[5,8,6,"a"],[1,6,5,"a"],[7,6,5,"a"]]},{375:"Each featured project: device stage, then its spec. Chips scroll sideways. More work as thumbnail rows.",768:"Stage full width with the spec below; Fitty and Kapture side by side",1280:"Alternating 8/4 and 4/8 rows, then a pair, then the table",1440:"As 1280"}],
+ ["Process",{375:[[1,4,1],[1,4,1,"l"],[1,4,1],[1,4,1],[1,4,1,"g"],[1,4,1],[1,4,3,"l"]],768:[[1,8,1],[1,8,1,"l"],[1,2,2],[3,2,2],[5,2,2,"g"],[7,2,2],[1,8,2,"a"]],1280:[[1,12,1],[1,3,4,"l"],[4,2,2],[6,2,2],[8,2,2,"g"],[10,3,2],[4,9,2,"a"]],1440:[[1,12,1],[1,3,4,"l"],[4,2,2],[6,2,2],[8,2,2,"g"],[10,3,2],[4,9,2,"a"]]},{375:"Vertical steps, then the outputs with thumbnails",768:"Steps in a row, outputs in a row of 5 below",1280:"Text 3 | diagram 9",1440:"As 1280"}],
+ ["Resume",{375:[[1,4,1],[1,4,1,"l"],[1,4,1],[1,4,3,"l"],[1,4,3,"l"]],768:[[1,6,1],[7,2,1],[1,8,2,"l"],[1,8,3,"l"],[1,8,3,"l"]],1280:[[1,8,1],[10,3,1],[1,4,6,"l"],[5,8,3,"l"],[5,8,3,"l"]],1440:[[1,8,1],[10,3,1],[1,4,6,"l"],[5,8,3,"l"],[5,8,3,"l"]]},{375:"About → resume button → experience → stack in 2 columns",768:"About, experience, then stack in 2 columns",1280:"About + roles 4 | experience + stack (3 columns) 8",1440:"As 1280"}],
+ ["Availability",{375:[[1,4,1],[1,4,1,"g"],[1,4,1,"l"],[1,4,1,"g"],[1,4,2,"l"],[1,4,2,"l"],[1,4,2,"l"]],768:[[1,5,1],[6,3,1,"g"],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"g"]],1280:[[1,6,1],[8,5,1,"g"],[1,8,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"g"]],1440:[[1,6,1],[8,5,1,"g"],[1,8,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"g"]]},{375:"Status first, 3 months, options stacked with full-width buttons",768:"Option rows drop the length and rate columns into the description",1280:"5-column option rows + 6 months",1440:"As 1280"}],
+ ["Contact",{375:[[1,4,2],[1,4,1,"l"],[1,4,1,"g"],[1,4,1,"l"],[1,4,1,"l"],[1,4,1,"l"],[1,4,1,"l"]],768:[[1,8,2],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"l"],[1,8,1,"l"]],1280:[[1,10,2],[1,8,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"]],1440:[[1,10,2],[1,8,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"],[1,12,1,"l"]]},{375:"Heading on 2 lines, Copy email, 4 link rows",768:"Heading on one line at 72px",1280:"Heading 86px, rows of 3 columns",1440:"Heading 96px"}],
+];
+document.getElementById("mx").innerHTML=`<b></b>${Object.keys(C).map(w=>`<b>${w}px · ${C[w]} cols</b>`).join("")}`+MX.map(r=>`<span class="secn">${r[0]}</span>`+Object.keys(C).map(w=>`<div class="cell"><div class="wire" style="grid-template-columns:repeat(${C[w]},1fr)">${r[1][w].map(k=>`<i class="${k[3]||""}" style="grid-column:${k[0]}/span ${k[1]};grid-row:span ${k[2]}"></i>`).join("")}</div><p>${r[2][w]}</p></div>`).join("")).join("");
+
+const PT=[
+ ["v1 · Read as motion designer","All film motifs are gone (slate, timecode, film strip, grain, contour shader, colour changes, letter-rain, the motion-design job). The hero says \"I build websites and apps.\" over real product screens. Films are one side-project row and one sentence in the resume.","Hero; Work; Background panel"],
+ ["v2 · Too much novelty","The datasheet costume is dropped: no part number, pin chip, \"in stock\", \"ordering information\" or revision history. Sections use plain names (Work, Process, Resume, Availability, Contact). The calm ruled structure and the process diagram stay.","Every section"],
+ ["v2 · Too little imagery","The four strongest projects are shown large in real browser, phone and Mac frames, one per platform. SPORI's full page scrolls inside its browser. Process outputs carry thumbnails. Every remaining project has a thumbnail.","Hero stage; Work"],
+ ["v2 · Weak hero","One full-width 96px headline over a full-width stage of three live products bleeding past the fold. The small tables are gone. Facts and links sit in one line above.","Hero frames"],
+ ["v2 · Colour / type","Red becomes circuit-board green #0f6b45, used only for the primary action, availability and active states. Display type goes from 62% condensed uppercase to 88% width mixed case, which is calmer and easier to read.","Type and colour panels"],
+ ["1 · Information order","Above the fold on both frames: name, role, UK (facts line); availability (nav dot and sub line); GitHub /phatlines, X @phatlines_ and Resume PDF (link buttons); Start a project (green).","Hero frames, fold lines"],
+ ["2 · Empty space","Section padding goes from 12–14vh (up to about 150px) to fixed 40/48/64. Every section is filled with real content: device stages, spec columns, tables, the diagram and the months strip. About merges into Resume.","Spacing panel; every frame"],
+ ["3 · Responsiveness","One 4/8/12/12 grid with 16/24/32/40 gutters. Every section is drawn at 375 beside its desktop frame and in the matrix at 768, 1280 and 1440. Device stages shrink to browser + phone on phones. Tap targets are at least 44px and text is at least 15px.","375 frames; matrix"],
+ ["4 · Background","Page, stage, screens: a white page, a pale grid stage only behind devices and diagrams, devices as the one elevated layer, and real screens as the colour. No WebGL or grain.","Background panel"],
+ ["5 · Resume","Section 04: experience (placeholders), a stack counted from shipped projects, roles, a GitHub panel and a PDF download. Resume also appears in the nav, the hero links and Contact.","Resume frames"],
+ ["6 · Availability + freelance","One site.availability source drives the nav dot, the hero sub line and section 05. Section 05 has freelance, contract and full-time rows with terms, plus six months of availability.","Nav; hero; Availability frames"],
+];
+document.getElementById("pt").innerHTML=`<tr><th>problem</th><th>design decision that fixes it</th><th>where on the board</th></tr>`+PT.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+</script>
+</body>
+</html>

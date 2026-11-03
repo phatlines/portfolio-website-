@@ -1,94 +1,111 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 import { site } from "../content/site";
 import type { Project } from "../content/types";
-import { featured, rest, explorations } from "../lib/projects";
-import { motion } from "../lib/motion";
-import { startProject } from "../lib/contact";
+import { reel, featured, rest, explorations, findProject } from "../lib/projects";
+import { searchProjects } from "../lib/search";
+import { motion, reduceMotion } from "../lib/motion";
 import { mailto } from "../lib/mailto";
+import { startProject } from "../lib/contact";
 import { Button } from "../components/Button";
-import { SectionHeading } from "../components/SectionHeading";
+import { Device } from "../components/Device";
+import { Folder } from "../components/Folder";
+import { ArrowOut } from "../components/Icons";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
-const pad2 = (n: number) => String(n).padStart(2, "0");
+gsap.registerPlugin(ScrollTrigger);
 type Open = (slug: string) => void;
 
-type RowProps = { p: Project; n: number; armed: boolean; onOpen: Open; onArm: (slug: string | null) => void; onHover: (src: string | null) => void; small?: boolean };
-
-/** One project: number, name, discipline, year, one line. Hover or focus floods the row in the project's colour and shows its preview; on touch the first tap shows it and the second opens. */
-function Row({ p, n, armed, onOpen, onArm, onHover, small }: RowProps) {
-  const touch = () => matchMedia("(hover: none)").matches;
+/** One featured project, large in its device, with what it is, my role, its stack and its links. */
+function Feature({ p, flip, onOpen }: { p: Project; flip: boolean; onOpen: Open }) {
   return (
-    <li>
-      <a className={`wk-row${p.featured ? " feat" : ""}${small ? " small" : ""}${armed ? " armed" : ""}`} href={`#work/${p.slug}`} data-cursor="open"
-        style={{ "--oc": p.color, "--oi": p.ink } as React.CSSProperties}
-        onClick={(e) => { e.preventDefault(); if (touch() && !armed) onArm(p.slug); else onOpen(p.slug); }}
-        onPointerEnter={() => onHover(p.media.poster)} onPointerLeave={() => onHover(null)} onFocus={() => onHover(p.media.poster)} onBlur={() => onHover(null)}>
-        <span className="wk-n">{pad2(n)}</span>
-        <b className="wk-name">{p.name}</b>
-        <span className="wk-meta"><span>{p.type}</span><span>{p.year}</span>{p.client && <span>{p.client}</span>}{p.tag && <em className="tag">{p.tag}</em>}</span>
-        <span className="wk-line">{p.result ?? p.line}</span>
-        <span className="wk-peek" aria-hidden="true"><img src={p.media.poster} alt="" width={960} height={540} loading="lazy" /></span>
+    <article className={`feat${flip ? " flip" : ""}`} aria-labelledby={`f-${p.slug}`}>
+      <a className={`feat-stage do-clip dev-on-${p.screen!.frame}`} href={`#work/${p.slug}`} onClick={(e) => { e.preventDefault(); onOpen(p.slug); }} aria-label={`${site.work.open} ${p.name}`} tabIndex={-1}>
+        <Device p={p} />
       </a>
-    </li>
+      <div className="feat-spec">
+        <span className="tag">{p.type} · {p.year}</span>
+        <h3 className="feat-name" id={`f-${p.slug}`}>{p.name}</h3>
+        <p className="feat-line">{p.result ?? p.line}</p>
+        <dl className="feat-dl">
+          <dt>{site.work.role}</dt><dd>{p.role}</dd>
+          <dt>{site.work.stack}</dt><dd>{p.stack.join(", ")}</dd>
+        </dl>
+        <div className="feat-acts">
+          <Button variant="secondary" href={`#work/${p.slug}`} onClick={(e) => { e.preventDefault(); onOpen(p.slug); }}>{site.work.view}</Button>
+          {p.liveUrl && <a className="btn btn-link" href={p.liveUrl} target="_blank" rel="noreferrer">{site.work.live}<ArrowOut /></a>}
+        </div>
+      </div>
+    </article>
   );
 }
 
-/** Every project in one numbered list, the old featured ones first and the side projects last. Ends with a way to hire. */
-export function Work({ onOpen, ready }: { onOpen: Open; ready: boolean }) {
-  const preview = useRef<HTMLImageElement>(null), root = useRef<HTMLElement>(null);
+/**
+ * Selected Work: three live products on a stage, a finder, one large project per platform, then the rest as folders.
+ * The finder filters both lists at once; nonsense shows everything with a note.
+ */
+export function Work({ onOpen }: { onOpen: Open }) {
+  const root = useRef<HTMLElement>(null);
+  const [query, setQuery] = useState("");
   const [armed, setArmed] = useState<string | null>(null);
-  const main = [...featured, ...rest];
+  const hits = useMemo(() => (query.trim() ? searchProjects(query) : reel), [query]);
+  const none = query.trim() !== "" && hits.length === 0;
+  const keep = (p: Project) => none || hits.includes(p);
+  const shownFeatured = featured.filter(keep);
+  const shownMore = [...rest, ...explorations].filter(keep);
+  const stage = ["invoicely", "fitty", "kapture"].map(findProject).filter((p): p is Project => !!p?.screen);
 
-  // Rows come up as they arrive: the name rises letter by letter inside its mask, the rest of the row fades up.
+  // Devices rise into place, spec columns follow; SPORI's full page scrolls inside its browser as you scroll past it.
   useLayoutEffect(() => {
-    if (!ready) return;
+    if (reduceMotion()) return;
     const ctx = gsap.context(() => {
-      const rows = gsap.utils.toArray<HTMLElement>(".wk-row");
-      const splits = rows.map((r) => SplitText.create(r.querySelector(".wk-name")!, { type: "words,chars", mask: "chars", wordsClass: "word", charsClass: "ch" }));
-      rows.forEach((r, i) => {
-        gsap.set(splits[i].chars, { yPercent: 115 });
-        gsap.set(r.querySelectorAll(".wk-n, .wk-meta, .wk-line"), { autoAlpha: 0, y: 14 });
-        ScrollTrigger.create({ trigger: r, start: "top 88%", once: true, onEnter: () => {
-          gsap.to(splits[i].chars, { yPercent: 0, duration: motion.sceneName, stagger: motion.sceneStagger, ease: motion.easeOut });
-          gsap.to(r.querySelectorAll(".wk-n, .wk-meta, .wk-line"), { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, delay: 0.15, ease: motion.easeSoft });
-        } });
+      gsap.from(".stage .dev", { y: 48, autoAlpha: 0, duration: motion.device, stagger: motion.deviceStagger, ease: motion.easeOut, scrollTrigger: { trigger: ".stage", start: "top 85%", once: true } });
+      gsap.utils.toArray<HTMLElement>(".feat").forEach((f) => {
+        gsap.from(f.querySelector(".dev"), { y: 32, autoAlpha: 0, duration: 0.8, ease: motion.easeOut, scrollTrigger: { trigger: f, start: "top 80%", once: true } });
+        gsap.from(f.querySelectorAll(".feat-spec > *"), { y: 12, autoAlpha: 0, duration: 0.6, stagger: 0.05, delay: 0.1, ease: motion.easeSoft, scrollTrigger: { trigger: f, start: "top 80%", once: true } });
+        const tall = f.querySelector<HTMLElement>(".dev-tall img");
+        if (tall) gsap.to(tall, { y: () => -(tall.offsetHeight - tall.parentElement!.offsetHeight), ease: "none", scrollTrigger: { trigger: f, start: "top 70%", end: "bottom 20%", scrub: 0.6, invalidateOnRefresh: true } });
       });
-      document.fonts.ready.then(() => ScrollTrigger.refresh());
-      return () => splits.forEach((s) => s.revert());
+      gsap.from(".fd-item", { y: 24, autoAlpha: 0, duration: 0.6, stagger: 0.06, ease: motion.easeSoft, scrollTrigger: { trigger: ".folders", start: "top 85%", once: true } });
     }, root);
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
     return () => ctx.revert();
-  }, [ready]);
-
-  // The preview follows the pointer with a little lag and leans into the move.
-  useEffect(() => {
-    const img = preview.current!;
-    let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
-    const move = (e: PointerEvent) => { x = e.clientX; y = e.clientY; };
-    const loop = () => { cx += (x - cx) * 0.14; cy += (y - cy) * 0.14; img.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%) rotate(${(x - cx) * 0.04}deg)`; raf = requestAnimationFrame(loop); };
-    addEventListener("pointermove", move); raf = requestAnimationFrame(loop);
-    return () => { removeEventListener("pointermove", move); cancelAnimationFrame(raf); };
   }, []);
-  const onHover = (src: string | null) => { const img = preview.current!; if (src) img.src = src; img.classList.toggle("on", !!src); };
 
-  const row = (p: Project, n: number, small?: boolean) => <Row key={p.slug} p={p} n={n} armed={armed === p.slug} onOpen={onOpen} onArm={setArmed} onHover={onHover} small={small} />;
   return (
-    <>
-      <section ref={root} className="work" id="work" aria-labelledby="work-h" data-paint="var(--black)" data-ink="var(--paper)">
-        <SectionHeading id="work-h">{site.work.heading}</SectionHeading>
-        <ul>{main.map((p, i) => row(p, i + 1))}</ul>
-        {explorations.length > 0 && <>
-          <h3 className="side-h">{site.work.sideHeading}</h3>
-          <ul>{explorations.map((p, i) => row(p, main.length + i + 1, true))}</ul>
-        </>}
-        <div className="wk-cta">
-          <p>{site.work.hire}</p>
-          <Button href={mailto} onClick={startProject} data-cursor="write">{site.nav.cta}</Button>
+    <section className="work section" id="work" ref={root} aria-labelledby="work-h">
+      <div className="sec-head">
+        <h2 className="sec-h" id="work-h">{site.work.heading}</h2>
+        <span className="sec-note">{site.work.count}</span>
+      </div>
+
+      <div className="stage" aria-hidden="true">
+        {stage.map((p) => <Device key={p.slug} p={p} className={`st-${p.slug}`} />)}
+      </div>
+
+      <div className="finder">
+        <label className="sr-only" htmlFor="finder-q">{site.work.question}</label>
+        <input id="finder-q" type="search" value={query} placeholder={site.work.question} onChange={(e) => setQuery(e.target.value)} autoComplete="off" />
+        <div className="chips" role="group" aria-label={site.work.question}>
+          <button type="button" className="chip" aria-pressed={!query} onClick={() => setQuery("")}>{site.work.all}</button>
+          {site.work.chips.map((c) => <button key={c.query} type="button" className="chip" aria-pressed={query === c.query} onClick={() => setQuery(query === c.query ? "" : c.query)}>{c.label}</button>)}
         </div>
-      </section>
-      <img className="preview" ref={preview} alt="" aria-hidden="true" />
-    </>
+      </div>
+      <p className="finder-none" role="status">{none ? site.work.noMatch : ""}</p>
+
+      <div className="feats">{shownFeatured.map((p, i) => <Feature key={p.slug} p={p} flip={i % 2 === 1} onOpen={onOpen} />)}</div>
+
+      {shownMore.length > 0 && <>
+        <h3 className="sub-h">{site.work.moreHeading}</h3>
+        <ul className="folders">
+          {shownMore.map((p) => <Folder key={p.slug} p={p} side={p.group === "exploration"} armed={armed === p.slug} onArm={setArmed} onOpen={onOpen} />)}
+        </ul>
+      </>}
+
+      <div className="hire">
+        <p>{site.work.hire}</p>
+        <Button href={mailto} onClick={startProject}>{site.nav.cta}</Button>
+      </div>
+    </section>
   );
 }

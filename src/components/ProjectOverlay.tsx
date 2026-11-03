@@ -144,7 +144,7 @@ export function ProjectOverlay({ slug, onClose, onOpen }: Props) {
   return (
     <div className="overlay" ref={ref} role="dialog" aria-modal="true" aria-labelledby="ov-name" style={{ "--oc": p.color, "--oi": p.ink } as React.CSSProperties} >
       <div className="ov-content">
-      <div className="ov-bar"><button type="button" className="ov-close" onClick={leave} data-cursor="close">{site.overlay.close}</button></div>
+      <div className="ov-bar"><button type="button" className="ov-close" onClick={leave}>{site.overlay.close}</button></div>
       <div className="ov-grid">
         <header className="ov-head">
           <p className="ov-meta ov-reveal">
@@ -167,13 +167,13 @@ export function ProjectOverlay({ slug, onClose, onOpen }: Props) {
           <div><dt>{site.overlay.builtWith}</dt><dd>{p.stack.join(", ")}</dd></div>
         </dl>
         <div className="ov-link ov-reveal">
-          <Button variant="ink" href={mailto} onClick={startProject} data-cursor="write">{site.nav.cta}</Button>
+          <Button href={mailto} onClick={startProject}>{site.nav.cta}</Button>
           {p.liveUrl
-            ? <Button variant="outline" href={p.liveUrl} target="_blank" rel="noreferrer">{site.overlay.live}</Button>
+            ? <Button variant="secondary" href={p.liveUrl} target="_blank" rel="noreferrer">{site.overlay.live}</Button>
             : p.linkSoon ? <span className="ov-nolink">{site.overlay.noLink}</span> : null}
         </div>
       </div>
-      <a className="ov-next" href={`#work/${next.slug}`} onClick={sweepTo(next.slug)} data-cursor="next">
+      <a className="ov-next" href={`#work/${next.slug}`} onClick={sweepTo(next.slug)}>
         <span>{site.overlay.next}</span>
         <b style={{ "--len": next.name.length } as React.CSSProperties}>{next.name}</b>
       </a>
