@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { Media } from "../content/types";
-import { reduceMotion } from "../lib/motion";
+import { loopWhenVisible } from "../lib/pause";
 
 /** A muted loop that plays only while on screen (or a still). Tall screenshots scroll slowly inside the frame. */
 export function LoopClip({ media, className = "" }: { media: Media; className?: string }) {
@@ -8,9 +8,7 @@ export function LoopClip({ media, className = "" }: { media: Media; className?: 
   useEffect(() => {
     const v = vid.current;
     if (!v) return;
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting && !reduceMotion() ? v.play().catch(() => {}) : v.pause()), { threshold: 0.25 });
-    io.observe(v);
-    return () => io.disconnect();
+    return loopWhenVisible(v, 0.25);
   }, []);
   if (media.kind === "video")
     return <video ref={vid} className={`clip ${className}`} src={media.src} poster={media.poster} muted loop playsInline preload="none" aria-label={media.alt} />;

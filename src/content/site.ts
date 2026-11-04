@@ -35,17 +35,17 @@ export const site = {
     steps: [
       { name: "fonts", detail: "prox yo, josefin" },
       { name: "work", detail: "8 projects" },
-      { name: "resume", detail: "1+ year" },
+      { name: "resume", detail: "2 years" },
     ],
     ready: "ready in",
     skip: "Tap or press any key to skip",
   },
 
   hero: {
-    heading: "I build websites and apps.",
-    roles: ["Software engineer", "Motion designer", "Web designer", "iOS developer"], // typed in turn in the box beside my name
+    heading: "We build websites and apps.",
+    roles: ["Software engineer", "Web designer", "iOS developer", "Motion designer"], // typed in turn in the box beside my name
     // The hero is an editor window: these are its chrome, not content.
-    ide: { title: "phatlines — portfolio", explorer: "Explorer", folder: "portfolio", file: "hero.tsx", branch: "main", meta: ["Ln 1, Col 1", "UTF-8", "TypeScript React"] },
+    ide: { title: "~/phatlines/portfolio", explorer: "Explorer", folder: "portfolio", file: "hero.tsx", branch: "main", meta: ["Ln 1, Col 1", "UTF-8", "TypeScript React"] },
     lead: "Websites, web apps, iOS and Mac apps, designed and built end to end.",
     secondary: "See the work",
     resume: "Resume",
@@ -104,7 +104,6 @@ export const site = {
       { when: "2024 – now", role: "Software engineer, freelance", where: "phatlines", what: "Websites, web apps, iOS and Mac apps for founders, studios and small businesses" },
     ],
     stackHeading: "Stack",
-    stackNote: "used in shipped projects",
     github: "Click here to check some public repos of some of our projects.",
     githubCta: "Open GitHub",
   },
@@ -125,7 +124,7 @@ export const site = {
     next: "your next", // + one of the words below, typed in turn in a box
     nextWords: ["project", "website", "iOS app", "Web app", "motion graphics"],
     mailSubject: "New project",
-    line: "Tell me what you're making. we will reply within two working days.",
+    line: "Tell me what you're making. We will reply within two working days.",
     emailLabel: "Email",
     copy: "Copy email",
     copied: "Copied",
@@ -151,11 +150,12 @@ export const site = {
 
   footer: {
     rights: "© 2026 phatlines. All rights reserved.",
+    pause: "Pause motion", play: "Play motion", // stops the typing, the pulsing dot and the video loops
   },
 
   overlay: { close: "Close", next: "Next project", live: "Visit the live site", noLink: "Live link coming soon", builtWith: "Built with", role: "Role" },
 
-  // The 404 page. Approved 2026-10-27; the error lines and "Did you mean" are v1.1.
+  // The 404 page. 
   notFound: {
     title: "Page not found · phatlines",
     error: "Error: route not found",
@@ -175,7 +175,7 @@ export const site = {
   journal: {
     title: "Journal · phatlines",
     heading: "Coming soon",
-    body: "This is where I will put my blogs and resources. Kindly check back later.",
+    body: "This is where we plan to put blogs, reads, and resources. Kindly check back later. Thank you",
     back: "Back to the start",
   },
 };

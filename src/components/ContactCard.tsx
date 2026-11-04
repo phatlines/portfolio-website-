@@ -4,7 +4,7 @@ import { site } from "../content/site";
 import { commitMessage, composeGmail, OPEN_CONTACT } from "../lib/contact";
 import { composeMailto } from "../lib/mailto";
 import { motion, reduceMotion } from "../lib/motion";
-import { getLenis } from "../hooks/useSmoothScroll";
+import { getLenis } from "../lib/scroller";
 import { Button } from "./Button";
 import { CopyIcon } from "./Icons";
 

@@ -17,10 +17,11 @@ export function Contact() {
   const s = site.social;
   return (
     <section className="contact section" id="contact" aria-labelledby="contact-h">
+      <h2 className="sr-only" id="contact-h">{site.contact.heading}</h2>
       <a className="contact-big" href={mailto} onClick={startProject} aria-label={`${site.contact.big} ${site.contact.next} ${site.contact.nextWords[0]}: ${site.nav.cta}`}>
-        <h2 className="cb-head" id="contact-h" aria-hidden="true">
+        <span className="cb-head" aria-hidden="true">
           {site.contact.big.replace("'", "").split(" ").map((w, i) => <span key={i} className="cw" style={{ "--i": i } as React.CSSProperties}>{w}</span>)}
-        </h2>
+        </span>
         <span className="cb-next" aria-hidden="true">{site.contact.next} <Typer words={site.contact.nextWords} /></span>
       </a>
       <p className="contact-line">{site.contact.line}</p>

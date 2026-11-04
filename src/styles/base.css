@@ -15,22 +15,31 @@
   --ink-soft: #a7b0aa; /* secondary text on ink */
   --night: #000; /* the hero, loader and menu: the portrait's own black, so the photo has no edge */
   --green: #0f6b45;
-  --green-hi: #1a8a5c;
+  --green-hi: #188257;
   --green-2: #e3f1ea;
   --green-on-ink: #6fd3a3;
   --stage: #eef0ed;
   --rule: #d5d9d5;
   --rule-ink: rgb(255 255 255 / .16);
 
-  /* ===== SECTION COLOURS: change a section's background and text colour here, one pair per section =====
-     transparent = the page itself (white with the dot grid). A colour here is full width and covers the dots.
-     The hero and the 404 are always the ink ground (--night above). */
-  --bg-work: transparent;          --fg-work: var(--ink);
-  --bg-process: transparent;       --fg-process: var(--ink);
-  --bg-resume: transparent;        --fg-resume: var(--ink);
-  --bg-availability: transparent;  --fg-availability: var(--ink);
-  --bg-contact: transparent;       --fg-contact: var(--ink);
-  --bg-footer: transparent;        --fg-footer: var(--ink);
+  /* ===== SECTION COLOURS: two values per section =====
+     --bg-<section>:   the section's background. transparent = the page itself (white with the dot grid).
+                       A colour is full width and covers the dots.
+     --dark-<section>: 0 when the background is light, 1 when it is dark. This flips the text, muted text,
+                       lines, search box and selected chips to their light versions (the light panels inside
+                       a section, such as the stage, flow chart and month boxes, keep their own colours).
+     Example: --bg-process: #111412; --dark-process: 1;
+     Sections: work, process, resume, availability, contact, footer. The hero and the 404 are always the ink ground (--night above). */
+  --bg-work: transparent;          --dark-work: 0;
+  --bg-process: transparent;       --dark-process: 0;
+  --bg-resume: transparent;        --dark-resume: 0;
+  --bg-availability: transparent;  --dark-availability: 0;
+  --bg-contact: transparent;       --dark-contact: 0;
+  --bg-footer: transparent;        --dark-footer: 0;
+
+  /* The ink colours as they are on a light ground, frozen here so a dark section can still hand them back to its light panels. */
+  --ink-l: var(--ink); --ink-2-l: var(--ink-2); --rule-l: var(--rule);
+  --on-ink: #fff; /* text on an ink-filled thing, such as a selected chip */
 
   --t-hero: clamp(3rem, 7vw, 6.5rem);
   --t-section: clamp(2.25rem, 4vw, 3.5rem);

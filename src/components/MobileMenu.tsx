@@ -5,7 +5,7 @@ import { site } from "../content/site";
 import { motion, reduceMotion } from "../lib/motion";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
-import { getLenis } from "../hooks/useSmoothScroll";
+import { getLenis } from "../lib/scroller";
 import { SECTIONS, sectionLabel, JOURNAL } from "../lib/sections";
 import { Button } from "./Button";
 import { GitHubMark, XMark } from "./Icons";

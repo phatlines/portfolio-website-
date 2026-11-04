@@ -65,11 +65,14 @@ export function Work({ onOpen }: { onOpen: Open }) {
     const ctx = gsap.context(() => {
       gsap.from(".stage .dev", { yPercent: 12, autoAlpha: 0, duration: motion.device, stagger: motion.deviceStagger, ease: motion.easeOut, scrollTrigger: { trigger: ".stage", start: "top 85%", once: true } });
       const touch = matchMedia("(pointer: coarse)").matches;
-      gsap.utils.toArray<HTMLElement>(".stage .dev").forEach((d) => Draggable.create(d, {
-        bounds: ".stage", inertia: true, edgeResistance: 0.85, zIndexBoost: true,
-        trigger: touch ? d.querySelector<HTMLElement>(".dev-bar") ?? d : d,
-        onPress: () => d.classList.add("held"), onRelease: () => d.classList.remove("held"),
-      }));
+      gsap.utils.toArray<HTMLElement>(".stage .dev").forEach((d) => {
+        if (touch && !d.querySelector(".dev-bar")) return; // the phone has no title bar to grab, and a drag from its screen would trap the page scroll
+        Draggable.create(d, {
+          bounds: ".stage", inertia: true, edgeResistance: 0.85, zIndexBoost: true,
+          trigger: touch ? d.querySelector<HTMLElement>(".dev-bar") ?? d : d,
+          onPress: () => d.classList.add("held"), onRelease: () => d.classList.remove("held"),
+        });
+      });
       const wide = matchMedia("(min-width: 1100.02px)").matches;
       gsap.utils.toArray<HTMLElement>(".feat").forEach((f) => {
         const side = f.classList.contains("flip") && wide ? -1 : 1; // 1: screen from the left, words from the right

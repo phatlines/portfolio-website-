@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "../lib/motion";
+import { isPaused } from "../lib/pause";
 
 /**
  * A word that types itself in a box, deletes, and types the next one (the hero's job title, the footer's "your next …").
@@ -11,6 +12,7 @@ export function Typer({ words }: { words: readonly string[] }) {
   useEffect(() => {
     let i = 0, n = words[0].length, del = false, t: ReturnType<typeof setTimeout>;
     const step = () => {
+      if (isPaused()) { t = setTimeout(step, 300); return; } // paused by the visitor: hold the word
       if (!del && n === words[i].length) { del = true; t = setTimeout(step, motion.roleHold); return; }
       if (del && n === 0) { del = false; i = (i + 1) % words.length; }
       n += del ? -1 : 1;

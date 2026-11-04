@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import type { Project } from "../content/types";
-import { reduceMotion } from "../lib/motion";
+import { loopWhenVisible } from "../lib/pause";
 
 /** A project's live screen in its device: a browser window, a phone or a Mac window. Video loops play only while on screen. */
 export function Device({ p, className = "" }: { p: Project; className?: string }) {
@@ -10,9 +10,7 @@ export function Device({ p, className = "" }: { p: Project; className?: string }
   useEffect(() => {
     const v = vid.current;
     if (!v) return;
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting && !reduceMotion() ? v.play().catch(() => {}) : v.pause()), { threshold: 0.2 });
-    io.observe(v);
-    return () => io.disconnect();
+    return loopWhenVisible(v, 0.2);
   }, []);
 
   if (s.frame === "phone" && s.crop) {

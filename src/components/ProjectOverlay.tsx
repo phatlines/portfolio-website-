@@ -6,7 +6,7 @@ import Lenis from "lenis";
 import { site } from "../content/site";
 import { findProject, nextProject } from "../lib/projects";
 import { motion, reduceMotion } from "../lib/motion";
-import { getLenis } from "../hooks/useSmoothScroll";
+import { getLenis } from "../lib/scroller";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { Button } from "./Button";
