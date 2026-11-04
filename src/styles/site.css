@@ -2,11 +2,12 @@
 
 /* ---------- Page background: a dot grid that glows green round the pointer (behind everything; the hero covers it) ---------- */
 .dots { --gap: 24px; position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: radial-gradient(circle, rgb(17 20 18 / .075) .9px, transparent 1.3px); background-size: var(--gap) var(--gap); }
-.dots::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(circle, rgb(26 138 92 / .55) 1.8px, transparent 2.3px); background-size: var(--gap) var(--gap); -webkit-mask-image: radial-gradient(circle 150px at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / .45) 45%, transparent 100%); mask-image: radial-gradient(circle 150px at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / .45) 45%, transparent 100%); }
+/* The glow is one small block of green dots, 15 cells square, that moves a whole cell at a time by transform only (nothing repaints per frame). Keep --gap and 360px in step with useDotLight. */
+.dots::after { content: ""; position: absolute; left: 0; top: 0; width: 360px; height: 360px; background-image: radial-gradient(circle, rgb(26 138 92 / .55) 1.8px, transparent 2.3px); background-size: var(--gap) var(--gap); -webkit-mask-image: radial-gradient(circle 150px at center, #000 0%, rgb(0 0 0 / .45) 45%, transparent 100%); mask-image: radial-gradient(circle 150px at center, #000 0%, rgb(0 0 0 / .45) 45%, transparent 100%); transform: translate3d(var(--gx, -999px), var(--gy, -999px), 0); transition: transform 160ms linear; will-change: transform; }
 @media (hover: none) { .dots::after { display: none; } }
 
 /* Each section takes its colours from the SECTION COLOURS block in base.css: --bg-* and --dark-*. The dark value mixes the ink, muted-text, line
-   and on-ink colours towards their light versions, so everything inside follows; the shadow and clip stretch the background to the full screen width. */
+   and on-ink colours towards their light versions, so everything inside follows. A plain full-width layer behind the section (::before) carries the background; the page clips the sideways overflow (body). */
 .work { --sec-bg: var(--bg-work); --sec-dark: var(--dark-work); }
 .process { --sec-bg: var(--bg-process); --sec-dark: var(--dark-process); }
 .about { --sec-bg: var(--bg-resume); --sec-dark: var(--dark-resume); }
@@ -18,8 +19,9 @@
   --ink-2: color-mix(in srgb, var(--ink-soft) calc(var(--sec-dark) * 100%), var(--ink-2-l));
   --rule: color-mix(in srgb, var(--rule-ink) calc(var(--sec-dark) * 100%), var(--rule-l));
   --on-ink: color-mix(in srgb, var(--ink-l) calc(var(--sec-dark) * 100%), #fff);
-  background: var(--sec-bg); color: var(--ink); box-shadow: 0 0 0 100vmax var(--sec-bg); clip-path: inset(0 -100vmax);
+  position: relative; isolation: isolate; color: var(--ink);
 }
+.work::before, .process::before, .about::before, .avail-sec::before, .contact::before, .footer::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; margin-left: -50vw; background: var(--sec-bg); pointer-events: none; }
 /* Light panels keep light-ground colours even inside a dark section. */
 .stage, .feat-stage, .flow, .gh, .month.open { --ink: var(--ink-l); --ink-2: var(--ink-2-l); --rule: var(--rule-l); --on-ink: #fff; color: var(--ink-l); }
 
@@ -48,6 +50,9 @@ html[data-paused] .dot, html[data-paused] .dot::after, html[data-paused] .role-c
 .btn { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; font: 700 1rem/1 var(--body); white-space: nowrap; text-decoration: none; cursor: pointer; border: 0; background: none; transition: transform 150ms; }
 .btn:active { transform: scale(.97); }
 .btn-label { display: inline-block; text-align: center; }
+.btn-stack { position: relative; }
+.btn-size { visibility: hidden; }
+.btn-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 .btn-icon { display: inline-flex; font-size: 1.125em; }
 /* Primary: green with a cut corner; a lighter fill rises from the cut while the label resolves. */
 .btn-primary { color: #fff; background: var(--green); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); overflow: hidden; }
@@ -175,7 +180,6 @@ a.ide-file:hover { background: rgb(255 255 255 / .05); color: #fff; }
 .stage .dev.held { cursor: grabbing; box-shadow: 0 10px 20px -8px rgb(17 20 18 / .3), 0 60px 100px -40px rgb(17 20 18 / .6); }
 .stage .dev img, .stage .dev video { pointer-events: none; -webkit-user-drag: none; }
 .stage-hint { position: absolute; left: 14px; top: 12px; z-index: 0; font: 500 13px var(--mono); color: var(--ink-2); pointer-events: none; }
-.work { overflow-x: clip; }
 .stage .st-kapture { right: 3%; top: 8%; width: 40%; z-index: 1; }
 .stage .st-invoicely { left: 5%; top: 9%; width: 60%; z-index: 2; }
 .stage .st-fitty { left: 61%; top: 18%; width: 15%; z-index: 3; }
@@ -347,13 +351,13 @@ a.ide-file:hover { background: rgb(255 255 255 / .05); color: #fff; }
 .cc :focus-visible { outline-color: var(--green-on-ink); }
 
 /* ---------- Footer ---------- */
-.footer { position: relative; overflow: hidden; container-type: inline-size; max-width: calc(var(--max) + var(--pad) * 2); margin: 0 auto; padding: 20px var(--pad) 0; }
+.footer { position: relative; container-type: inline-size; max-width: calc(var(--max) + var(--pad) * 2); margin: 0 auto; padding: 20px var(--pad) 0; }
 .ft-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding: 8px 0; border-top: 1px solid var(--rule); }
 .ft-rights { font-size: var(--t-meta); color: var(--ink-2); }
 .ft-social { display: flex; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .ft-social a:not(.btn) { display: grid; place-items: center; width: 44px; height: 44px; font-size: 20px; }
 /* The wordmark is exactly as wide as the footer (the word is 5.28 font-sizes wide in Prox Yo) and sinks below the edge: only its top shows. */
-.ft-word { display: block; margin: 12px 0 0; font: 400 22vw/.8 var(--head); font-size: calc(100cqw / 5.29); white-space: nowrap; text-decoration: none; height: .6em; transition: transform 400ms var(--ease-out); }
+.ft-word { display: block; overflow: hidden; margin: 12px 0 0; font: 400 22vw/.8 var(--head); font-size: calc(100cqw / 5.29); white-space: nowrap; text-decoration: none; height: .6em; transition: transform 400ms var(--ease-out); }
 .ft-word:hover { transform: translateY(-8px); }
 
 /* ---------- Tablet ---------- */

@@ -72,6 +72,8 @@ button { font: inherit; color: inherit; }
 ::selection { background: var(--green); color: #fff; }
 :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 html.lenis, html.lenis body { height: auto; }
+/* Sideways overflow (the slide-ins, the full-width section colours) is clipped here, on a normal element: on body it would reach the viewport and phones would zoom out to fit. */
+#root { overflow-x: clip; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .mono { font-family: var(--mono); font-size: var(--t-meta); }

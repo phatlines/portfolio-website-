@@ -77,8 +77,9 @@ export function Work({ onOpen }: { onOpen: Open }) {
       gsap.utils.toArray<HTMLElement>(".feat").forEach((f) => {
         const side = f.classList.contains("flip") && wide ? -1 : 1; // 1: screen from the left, words from the right
         const scrub = { trigger: f, start: "top 95%", end: "top 45%", scrub: 0.8 };
-        gsap.fromTo(f.querySelector(".feat-stage"), { x: -motion.slideIn * side, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power2.out", scrollTrigger: scrub });
-        gsap.fromTo(f.querySelectorAll(".feat-spec > *"), { x: motion.slideIn * side, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.08, ease: "power2.out", scrollTrigger: scrub });
+        gsap.fromTo(f.querySelector(".feat-stage"), { x: -motion.slideIn * side, autoAlpha: 0 }, { x: 0, autoAlpha: 1, snap: { x: 1 }, ease: "power2.out", scrollTrigger: scrub });
+        // the details move as one block (one layer, whole pixels), so borders and text stay crisp while it slides
+        gsap.fromTo(f.querySelector(".feat-spec"), { x: motion.slideIn * side, opacity: 0 }, { x: 0, opacity: 1, snap: { x: 1 }, ease: "power2.out", scrollTrigger: scrub });
         const tall = f.querySelector<HTMLImageElement>(".dev-tall img");
         if (tall) {
           gsap.to(tall, { y: () => -(tall.offsetHeight - tall.parentElement!.offsetHeight), ease: "none", scrollTrigger: { trigger: f, start: "top 70%", end: "bottom 20%", scrub: 0.6, invalidateOnRefresh: true } });
