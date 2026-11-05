@@ -3,6 +3,7 @@ import { site } from "../content/site";
 import { mailto } from "../lib/mailto";
 import { startProject } from "../lib/contact";
 import { Button } from "../components/Button";
+import { Wordmark } from "../components/Wordmark";
 import { MobileMenu } from "../components/MobileMenu";
 import { SECTIONS, sectionLabel, JOURNAL, onJournal } from "../lib/sections";
 
@@ -35,7 +36,7 @@ export function TopBar({ home = false }: { home?: boolean }) {
   const here = onJournal() ? "journal" : seen;
   return (
     <header className={`nav${past ? " past" : ""}`}>
-      <a className="nav-mark" href={home ? "/" : "#top"}>{site.name}</a>
+      <a className="nav-mark" href={home ? "/" : "#top"}><Wordmark className="nav-wordmark" /></a>
       <nav className="nav-links" aria-label={site.nav.main}>
         {SECTIONS.slice(0, 3).map((id) => <a key={id} className="nav-link" href={`${to}#${id}`} aria-current={here === id ? "true" : undefined}>{sectionLabel[id]}</a>)}
         <a className="nav-link" href={JOURNAL} aria-current={here === "journal" ? "page" : undefined}>{site.nav.journal}</a>

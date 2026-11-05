@@ -82,6 +82,7 @@ html[data-paused] .dot, html[data-paused] .dot::after, html[data-paused] .role-c
 /* ---------- Nav ---------- */
 .nav { position: fixed; inset: 0 0 auto; z-index: 60; display: flex; align-items: center; gap: 32px; height: 64px; padding: 0 var(--pad); color: #fff; transition: background 300ms, color 300ms, box-shadow 300ms; }
 .nav.past { background: color-mix(in srgb, var(--page) 92%, transparent); color: var(--ink); box-shadow: 0 1px 0 var(--rule); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.nav-wordmark { height: 1.5rem; width: auto; display: block; }
 .nav-mark { font: 400 1.75rem/1 var(--head); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 .nav-links { display: flex; gap: 28px; align-items: center; }
 .nav-link { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; font: 600 1rem var(--body); text-decoration: none; cursor: pointer; }
