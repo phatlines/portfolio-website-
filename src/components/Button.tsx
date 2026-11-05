@@ -2,7 +2,7 @@ import { useRef } from "react";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { scramble } from "../lib/scramble";
 import { isScrolling } from "../lib/scrolling";
-import { Bracket } from "./Icons";
+import { ArrowDown, Bracket } from "./Icons";
 
 type Variant = "primary" | "secondary" | "link";
 type Common = { variant?: Variant; children: string; icon?: ReactNode; className?: string };
@@ -11,7 +11,7 @@ type AsButton = Common & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children
 
 /**
  * The three buttons, each with one hover signature:
- * primary: the label runs through code glyphs and resolves while a lighter fill rises from the cut corner;
+ * primary: the label runs through code glyphs and resolves while a lighter fill rises from the cut corner, and the arrow in its circle turns from → to ↗;
  * secondary: square brackets slide in round the label; link: a block caret runs along the underline and blinks.
  * The label is read from aria-label, so a screen reader never hears the scramble. The scramble waits while the page is scrolling, so buttons sliding under a still pointer do not flash glyphs.
  */
@@ -27,6 +27,7 @@ export function Button({ variant = "primary", children, icon, className = "", ..
         ? <span className="btn-label btn-stack" aria-hidden="true"><span className="btn-size">{children}</span><span className="btn-text" ref={label}>{children}</span></span>
         : <span className="btn-label" aria-hidden="true">{children}</span>}
       {icon && <span className="btn-icon" aria-hidden="true">{icon}</span>}
+      {variant === "primary" && <span className="btn-go" aria-hidden="true"><ArrowDown /></span>}
       {variant === "secondary" && <Bracket right />}
     </>
   );

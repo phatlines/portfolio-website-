@@ -58,6 +58,11 @@ html[data-paused] .dot, html[data-paused] .dot::after, html[data-paused] .role-c
 .btn-primary { color: #fff; background: var(--green); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); overflow: hidden; }
 .btn-primary::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--green-hi); transform: translateY(101%); transition: transform 400ms var(--ease-out); }
 .btn-primary:hover::before, .btn-primary:focus-visible::before { transform: translateY(0); }
+/* The go circle: the label stays left, a white circle sits right with the site's down arrow turned to point right; on hover, focus or press it turns on to point up and right. */
+.btn-primary { justify-content: space-between; gap: 16px; padding: 0 8px 0 20px; }
+.btn-go { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--green); font-size: 20px; box-shadow: 0 2px 6px rgb(0 0 0 / .25); }
+.btn-go svg { transform: rotate(-90deg); transition: transform 380ms cubic-bezier(.34, 1.56, .64, 1); }
+.btn-primary:hover .btn-go svg, .btn-primary:focus-visible .btn-go svg, .btn-primary:active .btn-go svg { transform: rotate(-135deg); }
 .btn-primary:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 4px var(--green); }
 /* Secondary: a 1.5px line; square brackets slide in round the label. */
 .btn-secondary { border: 1.5px solid currentColor; border-radius: 2px; padding: 0 22px; }
@@ -91,7 +96,8 @@ html[data-paused] .dot, html[data-paused] .dot::after, html[data-paused] .role-c
 .nav:not(.past) .nav-link::after { background: var(--green-on-ink); }
 .nav-end { margin-left: auto; display: flex; align-items: center; gap: 18px; }
 .avail { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: var(--t-meta); white-space: nowrap; }
-.nav-cta { min-height: 42px; }
+.nav-cta { min-height: 42px; padding-left: 16px; }
+.nav-cta .btn-go { width: 26px; height: 26px; font-size: 16px; }
 
 /* ---------- Mobile menu (after landonorris.com) ---------- */
 .mm-btn { display: none; position: relative; z-index: 3; width: 48px; height: 48px; padding: 0; place-items: center; border: 1.5px solid currentColor; border-radius: 12px; background: color-mix(in srgb, var(--green) calc(var(--mm-fill, 0) * 100%), transparent); cursor: pointer; }
